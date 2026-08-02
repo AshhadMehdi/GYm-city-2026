@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gym City — Front Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --steel-900:#14171a;
+    --steel-850:#191d21;
+    --steel-800:#1e2226;
+    --steel-700:#282d32;
+    --steel-600:#363c42;
+    --chalk-100:#eeece6;
+    --chalk-300:#a8a9a5;
+    --chalk-500:#71767b;
+    --iron-orange:#ff6a1a;
+    --iron-orange-dim:#c9530f;
+    --plate-green:#4caf6d;
+    --plate-amber:#f0a63d;
+    --plate-rust:#d1483a;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255,106,26,0.08), transparent),
+      var(--steel-900);
+    color:var(--chalk-100);
+    min-height:100vh;
+    display:flex;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:0.02em;}
+
+  /* ---------- Login gate ---------- */
+  #gate{
+    position:fixed;inset:0;background:var(--steel-900);
+    display:flex;align-items:center;justify-content:center;z-index:100;
+    flex-direction:column;gap:28px;
+    background-image:
+      linear-gradient(rgba(255,106,26,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,106,26,0.05) 1px, transparent 1px);
+    background-size:38px 38px;
+  }
+  .gate-mark{display:flex;align-items:center;gap:14px;}
+  .gate-plate{width:46px;height:46px;border-radius:50%;border:5px solid var(--iron-orange);position:relative;}
+  .gate-plate::after{content:'';position:absolute;inset:12px;border-radius:50%;background:var(--steel-900);}
+  .gate-title{font-family:'Oswald',sans-serif;font-size:34px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+  .gate-title span{color:var(--iron-orange);}
+  .gate-sub{color:var(--chalk-500);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;margin-top:-14px;}
+  .role-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;max-width:520px;}
+  .role-card{
+    background:var(--steel-800);border:1px solid var(--steel-600);border-radius:var(--radius);
+    padding:20px 26px;cursor:pointer;text-align:center;width:150px;transition:.15s;
+  }
+  .role-card:hover{border-color:var(--iron-orange);transform:translateY(-2px);}
+  .role-card .r-icon{font-size:22px;margin-bottom:8px;}
+  .role-card .r-name{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:0.04em;font-size:15px;}
+  .role-card .r-desc{color:var(--chalk-500);font-size:11px;margin-top:4px;}
+
+  .pw-box{
+    display:none;flex-direction:column;align-items:center;gap:12px;
+    background:var(--steel-800);border:1px solid var(--steel-600);border-radius:var(--radius);
+    padding:26px 28px;width:280px;
+  }
+  .pw-box.show{display:flex;}
+  .pw-role{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:0.05em;font-size:14px;color:var(--iron-orange);}
+  .pw-input{
+    width:100%;background:var(--steel-900);border:1px solid var(--steel-600);color:var(--chalk-100);
+    padding:11px 14px;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;outline:none;text-align:center;
+    letter-spacing:0.1em;
+  }
+  .pw-input:focus{border-color:var(--iron-orange);}
+  .pw-input.shake{animation:shake .35s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-6px);}
+    75%{transform:translateX(6px);}
+  }
+  .pw-error{display:none;color:var(--plate-rust);font-size:12px;text-align:center;}
+  .pw-error.show{display:block;}
+  .pw-actions{display:flex;gap:10px;width:100%;}
+  .pw-actions .btn{flex:1;justify-content:center;}
+
+  /* ---------- App shell ---------- */
+  #app{display:none;width:100%;}
+  .sidebar{
+    width:216px;flex-shrink:0;background:var(--steel-850);border-right:1px solid var(--steel-700);
+    display:flex;flex-direction:column;height:100vh;position:sticky;top:0;
+  }
+  .side-brand{padding:22px 20px 18px;border-bottom:1px solid var(--steel-700);display:flex;align-items:center;gap:10px;}
+  .side-brand .gate-plate{width:26px;height:26px;border-width:3px;}
+  .side-brand .gate-plate::after{inset:7px;}
+  .side-brand-text{font-family:'Oswald',sans-serif;font-size:17px;letter-spacing:0.04em;text-transform:uppercase;}
+  .side-brand-text span{color:var(--iron-orange);}
+  nav{padding:14px 10px;flex:1;}
+  .nav-item{
+    display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:8px;color:var(--chalk-300);
+    cursor:pointer;font-size:14px;font-weight:500;margin-bottom:2px;transition:.12s;user-select:none;
+  }
+  .nav-item svg{width:17px;height:17px;flex-shrink:0;}
+  .nav-item:hover{background:var(--steel-800);color:var(--chalk-100);}
+  .nav-item.active{background:linear-gradient(90deg, rgba(255,106,26,0.16), rgba(255,106,26,0.03));color:var(--iron-orange);border-left:2px solid var(--iron-orange);padding-left:12px;}
+  .side-foot{padding:16px 18px;border-top:1px solid var(--steel-700);}
+  .role-pill{display:inline-flex;align-items:center;gap:7px;background:var(--steel-800);border:1px solid var(--steel-600);padding:6px 11px;border-radius:20px;font-size:11.5px;color:var(--chalk-300);}
+  .role-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--iron-orange);}
+  .switch-role{margin-top:10px;font-size:11.5px;color:var(--chalk-500);cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+  .switch-role:hover{color:var(--iron-orange);}
+
+  .main{flex:1;min-width:0;}
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 32px;border-bottom:1px solid var(--steel-700);
+  }
+  .page-title{font-family:'Oswald',sans-serif;font-size:26px;text-transform:uppercase;letter-spacing:0.03em;}
+  .page-sub{color:var(--chalk-500);font-size:13px;margin-top:2px;}
+  .content{padding:28px 32px 60px;}
+
+  /* ---------- Cards / stats ---------- */
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+  .stat-card{background:var(--steel-800);border:1px solid var(--steel-700);border-radius:var(--radius);padding:18px 20px;position:relative;overflow:hidden;}
+  .stat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--iron-orange));}
+  .stat-num{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;}
+  .stat-label{color:var(--chalk-500);font-size:12px;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;}
+
+  .panel{background:var(--steel-800);border:1px solid var(--steel-700);border-radius:var(--radius);overflow:hidden;margin-bottom:22px;}
+  .panel-head{padding:16px 20px;border-bottom:1px solid var(--steel-700);display:flex;align-items:center;justify-content:space-between;}
+  .panel-head h3{font-family:'Oswald',sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:0.04em;color:var(--chalk-100);}
+  .panel-body{padding:6px 0;}
+
+  /* ---------- Plate loader (signature element) ---------- */
+  .plate-loader{display:flex;align-items:center;gap:9px;}
+  .bar{position:relative;width:74px;height:6px;background:var(--steel-600);border-radius:3px;overflow:hidden;}
+  .bar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;}
+  .plate-days{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--chalk-300);white-space:nowrap;}
+
+  /* ---------- Table ---------- */
+  table{width:100%;border-collapse:collapse;}
+  th{text-align:left;padding:10px 20px;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--chalk-500);border-bottom:1px solid var(--steel-700);font-weight:600;}
+  td{padding:13px 20px;font-size:13.5px;border-bottom:1px solid var(--steel-700);}
+  tr:last-child td{border-bottom:none;}
+  tbody tr{transition:.1s;}
+  tbody tr:hover{background:var(--steel-850);}
+  .member-name{font-weight:600;}
+  .member-phone{color:var(--chalk-500);font-size:12px;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;}
+  .badge-active{background:rgba(76,175,109,0.15);color:var(--plate-green);}
+  .badge-soon{background:rgba(240,166,61,0.15);color:var(--plate-amber);}
+  .badge-over{background:rgba(209,72,58,0.15);color:var(--plate-rust);}
+  .plan-tag{color:var(--chalk-300);font-size:12.5px;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;border:none;
+    font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:.12s;
+  }
+  .btn-primary{background:var(--iron-orange);color:#1a0d05;}
+  .btn-primary:hover{background:#ff7d34;}
+  .btn-ghost{background:var(--steel-700);color:var(--chalk-100);}
+  .btn-ghost:hover{background:var(--steel-600);}
+  .btn-wa{background:rgba(76,175,109,0.15);color:var(--plate-green);}
+  .btn-wa:hover{background:rgba(76,175,109,0.28);}
+  .btn-motivate{background:rgba(255,106,26,0.15);color:var(--iron-orange);}
+  .btn-motivate:hover{background:rgba(255,106,26,0.28);}
+  .btn-sm{padding:6px 11px;font-size:12px;}
+  .btn svg{width:14px;height:14px;}
+
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:18px;}
+  input, select{
+    background:var(--steel-800);border:1px solid var(--steel-600);color:var(--chalk-100);
+    padding:9px 13px;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;outline:none;
+  }
+  input:focus, select:focus{border-color:var(--iron-orange);}
+  .search-box{flex:1;max-width:320px;}
+
+  /* ---------- Modal ---------- */
+  .modal-bg{position:fixed;inset:0;background:rgba(10,12,13,0.7);display:none;align-items:center;justify-content:center;z-index:50;backdrop-filter:blur(2px);}
+  .modal{background:var(--steel-800);border:1px solid var(--steel-600);border-radius:var(--radius);width:420px;max-width:92vw;padding:24px;}
+  .modal h3{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:18px;margin-bottom:16px;letter-spacing:0.03em;}
+  .field{margin-bottom:13px;}
+  .field label{display:block;font-size:12px;color:var(--chalk-500);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;}
+  .field input, .field select{width:100%;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+
+  /* ---------- Attendance ---------- */
+  .checkin-row{display:flex;gap:10px;margin-bottom:20px;}
+  .attend-list-item{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--steel-700);font-size:13.5px;}
+  .attend-list-item:last-child{border-bottom:none;}
+  .attend-time{font-family:'JetBrains Mono',monospace;color:var(--chalk-500);font-size:12px;}
+
+  /* ---------- Staff ---------- */
+  .staff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .staff-card{background:var(--steel-800);border:1px solid var(--steel-700);border-radius:var(--radius);padding:18px;}
+  .staff-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .avatar{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--iron-orange),var(--iron-orange-dim));display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;color:#1a0d05;}
+  .staff-name{font-weight:600;font-size:14px;}
+  .staff-role{color:var(--chalk-500);font-size:11.5px;text-transform:uppercase;letter-spacing:0.04em;}
+  .shift-tag{background:var(--steel-700);color:var(--chalk-300);font-size:11.5px;padding:5px 10px;border-radius:6px;display:inline-block;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+
+  .empty{padding:40px 20px;text-align:center;color:var(--chalk-500);font-size:13px;}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--steel-800);border:1px solid var(--iron-orange);color:var(--chalk-100);padding:13px 18px;border-radius:8px;font-size:13px;z-index:200;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+
+  @media(max-width:900px){
+    .stat-grid{grid-template-columns:repeat(2,1fr);}
+    .staff-grid{grid-template-columns:1fr;}
+    .sidebar{width:70px;}
+    .side-brand-text, .nav-item span, .side-foot{display:none;}
+    .nav-item{justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== ROLE GATE ===== -->
+<div id="gate">
+  <div class="gate-mark">
+    <div class="gate-plate"></div>
+    <div>
+      <div class="gate-title">GYM <span>CITY</span></div>
+      <div class="gate-sub">Front Desk System · Abbottabad</div>
+    </div>
+  </div>
+  <div class="role-row">
+    <div class="role-card" onclick="askPassword('Manager')">
+      <div class="r-icon">🗝️</div>
+      <div class="r-name">Manager</div>
+      <div class="r-desc">Full access</div>
+    </div>
+    <div class="role-card" onclick="askPassword('Front Desk')">
+      <div class="r-icon">🖥️</div>
+      <div class="r-name">Front Desk</div>
+      <div class="r-desc">Check-in & fees</div>
+    </div>
+    <div class="role-card" onclick="askPassword('Trainer')">
+      <div class="r-icon">💪</div>
+      <div class="r-name">Trainer</div>
+      <div class="r-desc">Attendance only</div>
+    </div>
+  </div>
+
+  <div class="pw-box" id="pwBox">
+    <div class="pw-role" id="pwRoleLabel">Manager</div>
+    <input type="password" id="pwInput" class="pw-input" placeholder="Enter passcode" autocomplete="off">
+    <div class="pw-error" id="pwError">Incorrect passcode. Try again.</div>
+    <div class="pw-actions">
+      <button class="btn btn-ghost" onclick="cancelPassword()">Back</button>
+      <button class="btn btn-primary" onclick="submitPassword()">Enter</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app">
+  <div class="sidebar">
+    <div class="side-brand">
+      <div class="gate-plate"></div>
+      <div class="side-brand-text">GYM <span>CITY</span></div>
+    </div>
+    <nav id="navList"></nav>
+    <div class="side-foot">
+      <div class="role-pill"><span class="dot"></span><span id="roleLabel"></span></div>
+      <div class="switch-role" onclick="logout()">Switch role</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="pageTitle">Dashboard</div>
+        <div class="page-sub" id="pageSub">Today at Gym City</div>
+      </div>
+      <div id="topbarAction"></div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<!-- ===== ADD MEMBER MODAL ===== -->
+<div class="modal-bg" id="memberModalBg">
+  <div class="modal">
+    <h3 id="modalTitle">New Member</h3>
+    <div class="field"><label>Full name</label><input id="mName" placeholder="e.g. Bilal Ahmed"></div>
+    <div class="field"><label>Phone (WhatsApp)</label><input id="mPhone" placeholder="03XX XXXXXXX"></div>
+    <div class="field"><label>Plan</label>
+      <select id="mPlan"><option>Monthly</option><option>Quarterly</option><option>Annual</option></select>
+    </div>
+    <div class="field"><label>Fee due date</label><input id="mDue" type="date"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveMemberBtn" onclick="saveMember()">Add member</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STAFF MODAL (Manager only) ===== -->
+<div class="modal-bg" id="staffModalBg">
+  <div class="modal">
+    <h3 id="staffModalTitle">New Staff Member</h3>
+    <div class="field"><label>Full name</label><input id="sName" placeholder="e.g. Rabia Shaukat"></div>
+    <div class="field"><label>Role</label>
+      <select id="sRole"><option>Manager</option><option>Front Desk</option><option>Trainer</option></select>
+    </div>
+    <div class="field"><label>Shift</label><input id="sShift" placeholder="e.g. 9:00 AM – 6:00 PM"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeStaffModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveStaffBtn" onclick="saveStaff()">Add staff</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONFIRM MODAL (replaces native confirm(), which sandboxed previews silently block) ===== -->
+<div class="modal-bg" id="confirmModalBg">
+  <div class="modal" style="width:360px">
+    <h3 style="margin-bottom:10px">Are you sure?</h3>
+    <p id="confirmMessage" style="color:var(--chalk-300);font-size:13.5px;margin-bottom:18px">Are you sure?</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-primary" id="confirmYesBtn" style="background:var(--plate-rust)">Remove</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- ICONS ---------------- */
+const ICONS = {
+  dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>',
+  members:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><circle cx="17" cy="8" r="2.6"/><path d="M15.5 14.2c2.8.4 5 2.6 5 5.8"/></svg>',
+  fees:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/><path d="M6 15h4"/></svg>',
+  attend:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9.5"/></svg>',
+  staff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 4v5"/></svg>',
+  wa:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.4.8-1.4.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2.1 3.2 5 4.4.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3z"/><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.5A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8.2 8.2 0 1112 20.2z"/></svg>',
+  spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>',
+};
+
+/* ---------------- STATE ---------------- */
+let role = null;
+let pendingRole = null;
+const ROLE_PASSWORDS = {
+  'Manager':'gymcity2026',
+  'Front Desk':'frontdesk123',
+  'Trainer':'trainer123',
+};
+let currentPage = 'dashboard';
+const todayStr = new Date().toISOString().slice(0,10);
+
+function askPassword(r){
+  pendingRole = r;
+  document.querySelector('.role-row').style.display = 'none';
+  document.getElementById('pwRoleLabel').textContent = r;
+  document.getElementById('pwBox').classList.add('show');
+  document.getElementById('pwError').classList.remove('show');
+  const input = document.getElementById('pwInput');
+  input.value = '';
+  input.focus();
+}
+function cancelPassword(){
+  pendingRole = null;
+  document.getElementById('pwBox').classList.remove('show');
+  document.querySelector('.role-row').style.display = 'flex';
+}
+function submitPassword(){
+  const input = document.getElementById('pwInput');
+  const entered = input.value;
+  if(entered === ROLE_PASSWORDS[pendingRole]){
+    const r = pendingRole;
+    pendingRole = null;
+    document.getElementById('pwBox').classList.remove('show');
+    document.querySelector('.role-row').style.display = 'flex';
+    enter(r);
+  }else{
+    document.getElementById('pwError').classList.add('show');
+    input.classList.remove('shake');
+    void input.offsetWidth;
+    input.classList.add('shake');
+    input.value='';
+    input.focus();
+  }
+}
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Enter' && document.getElementById('pwBox').classList.contains('show')){
+    submitPassword();
+  }
+});
+
+function daysBetween(dateStr){
+  const d = new Date(dateStr + 'T00:00:00');
+  const t = new Date(todayStr + 'T00:00:00');
+  return Math.round((d - t) / 86400000);
+}
+
+let members = [
+  {id:'GC-101', name:'Bilal Ahmed', phone:'923215567890', plan:'Monthly', due: shiftDate(4)},
+  {id:'GC-102', name:'Hamza Sarwar', phone:'923018842211', plan:'Quarterly', due: shiftDate(21)},
+  {id:'GC-103', name:'Usman Khalid', phone:'923339981234', plan:'Monthly', due: shiftDate(-3)},
+  {id:'GC-104', name:'Fahad Nawaz', phone:'923455621190', plan:'Annual', due: shiftDate(120)},
+  {id:'GC-105', name:'Ayesha Malik', phone:'923219087654', plan:'Monthly', due: shiftDate(1)},
+  {id:'GC-106', name:'Ali Raza', phone:'923006654321', plan:'Monthly', due: shiftDate(-8)},
+  {id:'GC-107', name:'Zainab Tariq', phone:'923337712345', plan:'Quarterly', due: shiftDate(45)},
+  {id:'GC-108', name:'Owais Yousaf', phone:'923124455667', plan:'Monthly', due: shiftDate(2)},
+];
+
+function shiftDate(days){
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0,10);
+}
+
+let staff = [
+  {name:'Adeel Khan', role:'Manager', shift:'9:00 AM – 6:00 PM'},
+  {name:'Rabia Shaukat', role:'Front Desk', shift:'8:30 AM – 4:30 PM'},
+  {name:'Junaid Iqbal', role:'Trainer', shift:'6:00 AM – 2:00 PM'},
+  {name:'Sania Baig', role:'Trainer', shift:'2:00 PM – 10:00 PM'},
+  {name:'Kashif Mehmood', role:'Front Desk', shift:'4:00 PM – 10:00 PM'},
+];
+
+let attendance = [
+  {member:'Hamza Sarwar', time:'7:14 AM'},
+  {member:'Ayesha Malik', time:'8:02 AM'},
+  {member:'Fahad Nawaz', time:'6:41 AM'},
+];
+
+/* ---------------- PERSISTENCE ---------------- */
+async function loadState(){
+  try{
+    const res = await window.storage.get('gymcity-members');
+    if(res && res.value) members = JSON.parse(res.value);
+  }catch(e){ /* no saved state yet, use defaults */ }
+  try{
+    const res = await window.storage.get('gymcity-attendance');
+    if(res && res.value) attendance = JSON.parse(res.value);
+  }catch(e){}
+}
+async function saveMembers(){
+  try{ await window.storage.set('gymcity-members', JSON.stringify(members)); }catch(e){ console.error('save failed', e); }
+}
+async function saveAttendance(){
+  try{ await window.storage.set('gymcity-attendance', JSON.stringify(attendance)); }catch(e){ console.error('save failed', e); }
+}
+
+/* ---------------- GATE / NAV ---------------- */
+const NAV = {
+  Manager:[['dashboard','Dashboard','dash'],['members','Members','members'],['fees','Fees','fees'],['attendance','Attendance','attend'],['staff','Staff','staff']],
+  'Front Desk':[['dashboard','Dashboard','dash'],['members','Members','members'],['fees','Fees','fees'],['attendance','Attendance','attend']],
+  Trainer:[['attendance','Attendance','attend'],['members','Members','members']],
+};
+
+function enter(r){
+  role = r;
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='flex';
+  document.getElementById('roleLabel').textContent = r;
+  buildNav();
+  currentPage = NAV[r][0][0];
+  render();
+}
+function logout(){
+  document.getElementById('gate').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('pwBox').classList.remove('show');
+  document.querySelector('.role-row').style.display = 'flex';
+}
+function buildNav(){
+  const nav = document.getElementById('navList');
+  nav.innerHTML = NAV[role].map(([key,label,icon]) =>
+    `<div class="nav-item" data-key="${key}" onclick="goTo('${key}')">${ICONS[icon]}<span>${label}</span></div>`
+  ).join('');
+}
+function goTo(key){
+  currentPage = key;
+  render();
+}
+
+/* ---------------- RENDER ROUTER ---------------- */
+function render(){
+  const activeEl = document.activeElement;
+  const activeId = activeEl && activeEl.id;
+  const selStart = activeEl && typeof activeEl.selectionStart === 'number' ? activeEl.selectionStart : null;
+  const selEnd = activeEl && typeof activeEl.selectionEnd === 'number' ? activeEl.selectionEnd : null;
+
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active', el.dataset.key===currentPage));
+  const titles = {
+    dashboard:['Dashboard','Today at Gym City'],
+    members:['Members','Roster & membership status'],
+    fees:['Fees','Track dues & send reminders'],
+    attendance:['Attendance',"Today · "+ new Date().toLocaleDateString('en-GB',{weekday:'long', day:'numeric', month:'long'})],
+    staff:['Staff','Shift schedule'],
+  };
+  document.getElementById('pageTitle').textContent = titles[currentPage][0];
+  document.getElementById('pageSub').textContent = titles[currentPage][1];
+
+  const action = document.getElementById('topbarAction');
+  action.innerHTML='';
+  if(currentPage==='members' && role!=='Trainer'){
+    action.innerHTML = `<button class="btn btn-primary" onclick="openModal()">${ICONS.plus} Add member</button>`;
+  }
+  if(currentPage==='staff' && role==='Manager'){
+    action.innerHTML = `<button class="btn btn-primary" onclick="openStaffModal()">${ICONS.plus} Add staff</button>`;
+  }
+
+  const c = document.getElementById('content');
+  if(currentPage==='dashboard') c.innerHTML = renderDashboard();
+  if(currentPage==='members') c.innerHTML = renderMembers();
+  if(currentPage==='fees') c.innerHTML = renderFees();
+  if(currentPage==='attendance') c.innerHTML = renderAttendance();
+  if(currentPage==='staff') c.innerHTML = renderStaff();
+
+  if(activeId){
+    const el = document.getElementById(activeId);
+    if(el){
+      el.focus();
+      if(selStart!=null && el.setSelectionRange){
+        try{ el.setSelectionRange(selStart, selEnd); }catch(e){}
+      }
+    }
+  }
+}
+
+/* ---------------- STATUS HELPERS ---------------- */
+function statusOf(due){
+  const d = daysBetween(due);
+  if(d < 0) return {label:'Overdue', cls:'over', color:'var(--plate-rust)'};
+  if(d <= 5) return {label:'Expiring soon', cls:'soon', color:'var(--plate-amber)'};
+  return {label:'Active', cls:'active', color:'var(--plate-green)'};
+}
+const PLAN_DAYS = {Monthly:30, Quarterly:90, Annual:365};
+function markPaid(id){
+  const m = members.find(x=>x.id===id);
+  if(!m) return;
+  const base = daysBetween(m.due) < 0 ? new Date() : new Date(m.due + 'T00:00:00');
+  base.setDate(base.getDate() + PLAN_DAYS[m.plan]);
+  m.due = base.toISOString().slice(0,10);
+  saveMembers();
+  render();
+  showToast(`${m.name}'s fee marked paid — renewed to ${m.due}`);
+}
+function deleteMember(id){
+  const m = members.find(x=>x.id===id);
+  if(!m) return;
+  askConfirm(`Remove ${m.name} from Gym City's roster?`, ()=>{
+    members = members.filter(x=>x.id!==id);
+    saveMembers();
+    render();
+    showToast(`${m.name} removed`);
+  });
+}
+let editingMemberId = null;
+function editMember(id){
+  const m = members.find(x=>x.id===id);
+  if(!m) return;
+  editingMemberId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Member';
+  document.getElementById('mName').value = m.name;
+  document.getElementById('mPhone').value = m.phone.replace(/^92/, '0');
+  document.getElementById('mPlan').value = m.plan;
+  document.getElementById('mDue').value = m.due;
+  document.getElementById('saveMemberBtn').textContent = 'Save changes';
+  openModal();
+}
+function plateLoader(due){
+  const d = daysBetween(due);
+  const st = statusOf(due);
+  const pct = Math.max(4, Math.min(100, ((d+10)/40)*100));
+  return `<div class="plate-loader">
+    <div class="bar"><div class="bar-fill" style="width:${pct}%;background:${st.color}"></div></div>
+    <span class="plate-days">${d<0? Math.abs(d)+'d over' : d+'d left'}</span>
+  </div>`;
+}
+
+/* ---------------- DASHBOARD ---------------- */
+function renderDashboard(){
+  const active = members.filter(m=>daysBetween(m.due)>5).length;
+  const soon = members.filter(m=>{const d=daysBetween(m.due);return d>=0&&d<=5;}).length;
+  const overdue = members.filter(m=>daysBetween(m.due)<0).length;
+  const checkins = attendance.length;
+
+  return `
+  <div class="stat-grid">
+    <div class="stat-card" style="--accent:var(--plate-green)"><div class="stat-num">${active}</div><div class="stat-label">Active members</div></div>
+    <div class="stat-card" style="--accent:var(--plate-amber)"><div class="stat-num">${soon}</div><div class="stat-label">Fees due soon</div></div>
+    <div class="stat-card" style="--accent:var(--plate-rust)"><div class="stat-num">${overdue}</div><div class="stat-label">Overdue</div></div>
+    <div class="stat-card" style="--accent:var(--iron-orange)"><div class="stat-num">${checkins}</div><div class="stat-label">Check-ins today</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><h3>Needs attention</h3></div>
+    <div class="panel-body">
+      ${members.filter(m=>daysBetween(m.due)<=5).sort((a,b)=>daysBetween(a.due)-daysBetween(b.due)).map(m=>`
+        <div class="attend-list-item">
+          <div>
+            <div class="member-name">${m.name}</div>
+            <div class="member-phone">${m.plan} plan</div>
+          </div>
+          ${plateLoader(m.due)}
+        </div>
+      `).join('') || '<div class="empty">Nothing needs attention right now.</div>'}
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><h3>Recent check-ins</h3></div>
+    <div class="panel-body">
+      ${attendance.slice().reverse().slice(0,5).map(a=>`
+        <div class="attend-list-item"><span>${a.member}</span><span class="attend-time">${a.time}</span></div>
+      `).join('') || '<div class="empty">No check-ins yet today.</div>'}
+    </div>
+  </div>`;
+}
+
+/* ---------------- MEMBERS ---------------- */
+let memberSearch = '';
+function renderMembers(){
+  const filtered = members.filter(m => m.name.toLowerCase().includes(memberSearch.toLowerCase()));
+  return `
+  <div class="toolbar">
+    <input id="memberSearchInput" class="search-box" placeholder="Search members..." value="${memberSearch}" oninput="memberSearch=this.value;render()">
+  </div>
+  <div class="panel">
+    <table>
+      <thead><tr><th>Member</th><th>ID</th><th>Plan</th><th>Fee status</th><th style="min-width:230px">Actions</th></tr></thead>
+      <tbody>
+      ${filtered.map(m=>{
+        const st = statusOf(m.due);
+        return `<tr>
+          <td><div class="member-name">${m.name}</div><div class="member-phone">+${m.phone}</div></td>
+          <td class="mono" style="color:var(--chalk-500)">${m.id}</td>
+          <td class="plan-tag">${m.plan}</td>
+          <td><span class="badge badge-${st.cls}">${st.label}</span><div style="margin-top:6px">${plateLoader(m.due)}</div></td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-motivate btn-sm" onclick="sendMotivation('${m.id}')">${ICONS.spark} Motivate</button>
+            ${role!=='Trainer' ? `<button class="btn btn-wa btn-sm" onclick="sendReminder('${m.id}')">${ICONS.wa} Remind</button>` : ''}
+            ${role!=='Trainer' ? `<button class="btn btn-ghost btn-sm" onclick="markPaid('${m.id}')">${ICONS.check} Mark paid</button>` : ''}
+            ${role==='Manager' ? `<button class="btn btn-ghost btn-sm" onclick="editMember('${m.id}')">Edit</button>` : ''}
+            ${role==='Manager' ? `<button class="btn btn-ghost btn-sm" onclick="deleteMember('${m.id}')">Remove</button>` : ''}
+            </div>
+          </td>
+        </tr>`;
+      }).join('') || `<tr><td colspan="5"><div class="empty">No members match "${memberSearch}"</div></td></tr>`}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+/* ---------------- FEES ---------------- */
+function renderFees(){
+  const due = members.filter(m=>daysBetween(m.due)<=5).sort((a,b)=>daysBetween(a.due)-daysBetween(b.due));
+  const upcoming = members.filter(m=>daysBetween(m.due)>5).sort((a,b)=>daysBetween(a.due)-daysBetween(b.due));
+  return `
+  <div class="panel">
+    <div class="panel-head"><h3>Due now or overdue (${due.length})</h3></div>
+    <div class="panel-body">
+      ${due.map(m=>{
+        const st = statusOf(m.due);
+        return `<div class="attend-list-item">
+          <div>
+            <div class="member-name">${m.name}</div>
+            <div class="member-phone">${m.plan} · due ${m.due}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="badge badge-${st.cls}">${st.label}</span>
+            <button class="btn btn-wa btn-sm" onclick="sendReminder('${m.id}')">${ICONS.wa} WhatsApp reminder</button>
+            <button class="btn btn-ghost btn-sm" onclick="markPaid('${m.id}')">${ICONS.check} Mark paid</button>
+          </div>
+        </div>`;
+      }).join('') || '<div class="empty">Everyone is paid up. Nice.</div>'}
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h3>Upcoming (${upcoming.length})</h3></div>
+    <div class="panel-body">
+      ${upcoming.map(m=>`
+        <div class="attend-list-item">
+          <div><div class="member-name">${m.name}</div><div class="member-phone">${m.plan}</div></div>
+          ${plateLoader(m.due)}
+        </div>`).join('') || '<div class="empty">Nothing upcoming.</div>'}
+    </div>
+  </div>`;
+}
+
+function openWhatsApp(phone, msg){
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showLinkToast('WhatsApp message ready —', 'Open chat', url);
+}
+function showLinkToast(label, linkText, url){
+  const t = document.getElementById('toast');
+  t.innerHTML = `${label} <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:var(--iron-orange);font-weight:600;text-decoration:underline">${linkText}</a>`;
+  t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.style.display='none'; }, 6000);
+}
+
+function sendReminder(id){
+  const m = members.find(x=>x.id===id);
+  if(!m) return;
+  const d = daysBetween(m.due);
+  const msg = d < 0
+    ? `Hi ${m.name}, this is Gym City. Your membership fee was due on ${m.due}. Please stop by to renew and keep your access active. Thanks!`
+    : `Hi ${m.name}, this is Gym City. Friendly reminder that your membership fee is due on ${m.due}. See you at the gym!`;
+  openWhatsApp(m.phone, msg);
+}
+
+const MOTIVATION_MESSAGES = [
+  name => `Hey ${name}! 💪 We haven't seen you at Gym City in a bit. Your session's waiting for you — come reclaim your streak!`,
+  name => `${name}, small reminder from Gym City: consistency beats perfection. Even 30 minutes today keeps the momentum going. See you soon!`,
+  name => `Hi ${name}! The gym floor's a little quieter without you. Swing by today — your future self will thank you 🔥`,
+  name => `${name}, just a friendly nudge from Gym City — your goals don't take days off, and neither should you. Let's get back to it!`,
+  name => `Hey ${name}, missed you at the gym! No pressure, just a reminder that showing up is half the battle. We've got your spot ready 💪`,
+];
+function sendMotivation(id){
+  const m = members.find(x=>x.id===id);
+  if(!m) return;
+  const template = MOTIVATION_MESSAGES[Math.floor(Math.random()*MOTIVATION_MESSAGES.length)];
+  const msg = template(m.name);
+  openWhatsApp(m.phone, msg);
+}
+
+/* ---------------- ATTENDANCE ---------------- */
+let attendSearch = '';
+function renderAttendance(){
+  const matches = attendSearch ? members.filter(m=>m.name.toLowerCase().includes(attendSearch.toLowerCase())) : [];
+  return `
+  <div class="checkin-row">
+    <input id="attendSearchInput" class="search-box" placeholder="Type a member name to check in..." value="${attendSearch}" oninput="attendSearch=this.value;render()">
+  </div>
+  ${attendSearch ? `
+    <div class="panel" style="margin-bottom:18px">
+      <div class="panel-body">
+        ${matches.map(m=>`
+          <div class="attend-list-item">
+            <span class="member-name">${m.name}</span>
+            <button class="btn btn-primary btn-sm" onclick="checkIn('${m.name}')">${ICONS.check} Check in</button>
+          </div>`).join('') || '<div class="empty">No matching member.</div>'}
+      </div>
+    </div>` : ''}
+  <div class="panel">
+    <div class="panel-head"><h3>Today's log (${attendance.length})</h3></div>
+    <div class="panel-body">
+      ${attendance.slice().reverse().map(a=>`
+        <div class="attend-list-item"><span>${a.member}</span><span class="attend-time">${a.time}</span></div>
+      `).join('') || '<div class="empty">No check-ins yet today.</div>'}
+    </div>
+  </div>`;
+}
+function checkIn(name){
+  const time = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  attendance.push({member:name, time});
+  attendSearch='';
+  saveAttendance();
+  render();
+  showToast(`${name} checked in at ${time}`);
+}
+
+/* ---------------- STAFF ---------------- */
+function renderStaff(){
+  return `<div class="staff-grid">
+    ${staff.map((s,i)=>`
+      <div class="staff-card">
+        <div class="staff-top">
+          <div class="avatar">${s.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+          <div>
+            <div class="staff-name">${s.name}</div>
+            <div class="staff-role">${s.role}</div>
+          </div>
+        </div>
+        <div class="shift-tag">${s.shift}</div>
+        ${role==='Manager' ? `
+          <div style="display:flex;gap:6px;margin-top:14px">
+            <button class="btn btn-ghost btn-sm" onclick="editStaff(${i})">Edit</button>
+            <button class="btn btn-ghost btn-sm" onclick="deleteStaff(${i})">Remove</button>
+          </div>` : ''}
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+/* ---------------- ADD/EDIT MEMBER MODAL ---------------- */
+function openModal(){ document.getElementById('memberModalBg').style.display='flex'; }
+function closeModal(){
+  document.getElementById('memberModalBg').style.display='none';
+  document.getElementById('mName').value='';
+  document.getElementById('mPhone').value='';
+  document.getElementById('mDue').value='';
+  document.getElementById('modalTitle').textContent = 'New Member';
+  document.getElementById('saveMemberBtn').textContent = 'Add member';
+  editingMemberId = null;
+}
+function saveMember(){
+  const name = document.getElementById('mName').value.trim();
+  let phone = document.getElementById('mPhone').value.trim().replace(/\D/g,'');
+  const plan = document.getElementById('mPlan').value;
+  const due = document.getElementById('mDue').value;
+  if(!name || !phone || !due){ showToast('Fill in name, phone, and due date'); return; }
+  if(phone.startsWith('0')) phone = '92' + phone.slice(1);
+  if(!phone.startsWith('92')) phone = '92' + phone;
+
+  if(editingMemberId){
+    const m = members.find(x=>x.id===editingMemberId);
+    Object.assign(m, {name, phone, plan, due});
+    showToast(`${name}'s details updated`);
+  }else{
+    const id = 'GC-' + (100 + members.length + 1);
+    members.push({id, name, phone, plan, due});
+    showToast(`${name} added to Gym City`);
+  }
+  saveMembers();
+  closeModal();
+  currentPage = 'members';
+  render();
+}
+
+/* ---------------- STAFF MODAL (Manager only) ---------------- */
+let editingStaffIndex = null;
+function openStaffModal(){ document.getElementById('staffModalBg').style.display='flex'; }
+function closeStaffModal(){
+  document.getElementById('staffModalBg').style.display='none';
+  document.getElementById('sName').value='';
+  document.getElementById('sShift').value='';
+  document.getElementById('staffModalTitle').textContent = 'New Staff Member';
+  document.getElementById('saveStaffBtn').textContent = 'Add staff';
+  editingStaffIndex = null;
+}
+function editStaff(i){
+  const s = staff[i];
+  editingStaffIndex = i;
+  document.getElementById('sName').value = s.name;
+  document.getElementById('sRole').value = s.role;
+  document.getElementById('sShift').value = s.shift;
+  document.getElementById('staffModalTitle').textContent = 'Edit Staff Member';
+  document.getElementById('saveStaffBtn').textContent = 'Save changes';
+  openStaffModal();
+}
+function saveStaff(){
+  const name = document.getElementById('sName').value.trim();
+  const srole = document.getElementById('sRole').value;
+  const shift = document.getElementById('sShift').value.trim();
+  if(!name || !shift){ showToast('Fill in name and shift'); return; }
+  if(editingStaffIndex !== null){
+    staff[editingStaffIndex] = {name, role:srole, shift};
+    showToast(`${name}'s details updated`);
+  }else{
+    staff.push({name, role:srole, shift});
+    showToast(`${name} added to staff`);
+  }
+  closeStaffModal();
+  render();
+}
+function deleteStaff(i){
+  const s = staff[i];
+  askConfirm(`Remove ${s.name} from staff?`, ()=>{
+    staff.splice(i,1);
+    render();
+    showToast(`${s.name} removed`);
+  });
+}
+
+/* ---------------- CONFIRM MODAL ---------------- */
+function askConfirm(message, onYes){
+  document.getElementById('confirmMessage').textContent = message;
+  document.getElementById('confirmModalBg').style.display = 'flex';
+  const yesBtn = document.getElementById('confirmYesBtn');
+  const freshBtn = yesBtn.cloneNode(true);
+  yesBtn.parentNode.replaceChild(freshBtn, yesBtn);
+  freshBtn.addEventListener('click', ()=>{
+    closeConfirm();
+    onYes();
+  });
+}
+function closeConfirm(){
+  document.getElementById('confirmModalBg').style.display = 'none';
+}
+
+/* ---------------- TOAST ---------------- */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.style.display='none'; }, 2600);
+}
+
+/* ---------------- INIT ---------------- */
+loadState();
+</script>
+</body>
+</html>
