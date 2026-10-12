@@ -1,0 +1,3567 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GYM City — Gym Management System</title>
+  <meta name="description" content="GYM City's gym management system — member tracking, POS billing, trainer management and finance dashboards in one app."/>
+  <meta name="theme-color" content="#ffffff"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="GYM City — Gym Management System"/>
+  <meta property="og:description" content="Member tracking, POS billing, trainer management and finance — one app for GYM City."/>
+  <style>html,body{overflow-x:hidden}</style>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2'%3E%3Cpath d='M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4M3 10l7-7M14 21l7-7'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+/* ============================================================
+   GymFlow — Professional design system
+   Light (default) + Dark themes via html[data-theme]
+   ============================================================ */
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+/* ---------- Theme tokens ---------- */
+:root, html[data-theme="light"]{
+  --bg:#f4f6f8; --surface:#ffffff; --surface-2:#f8fafc; --surface-3:#f1f4f8;
+  --border:#e4e8ee; --border-strong:#d0d7e0;
+  --text:#0f172a; --text-2:#475467; --text-3:#667085; --text-4:#98a2b3;
+  --accent:#059669; --accent-strong:#047857; --accent-soft:#ecfdf5; --accent-border:#a7f3d0;
+  --danger:#dc2626; --danger-soft:#fef2f2; --danger-border:#fecaca;
+  --warn:#b45309; --warn-soft:#fffbeb; --warn-border:#fde68a;
+  --info:#0369a1; --info-soft:#f0f9ff;
+  --shadow-sm:0 1px 2px rgba(16,24,40,.05);
+  --shadow-md:0 4px 14px rgba(16,24,40,.07);
+  --shadow-lg:0 18px 50px rgba(16,24,40,.16);
+  --ring:0 0 0 3px rgba(5,150,105,.16);
+  color-scheme: light;
+}
+html[data-theme="dark"]{
+  --bg:#0c1016; --surface:#141a22; --surface-2:#1a212c; --surface-3:#202837;
+  --border:#242e3a; --border-strong:#33415596;
+  --text:#e6edf3; --text-2:#aab6c7; --text-3:#7e8ba0; --text-4:#5b6879;
+  --accent:#10b981; --accent-strong:#34d399; --accent-soft:rgba(16,185,129,.12); --accent-border:rgba(16,185,129,.35);
+  --danger:#f87171; --danger-soft:rgba(239,68,68,.12); --danger-border:rgba(239,68,68,.3);
+  --warn:#fbbf24; --warn-soft:rgba(245,158,11,.12); --warn-border:rgba(245,158,11,.3);
+  --info:#38bdf8; --info-soft:rgba(56,189,248,.12);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+  --shadow-md:0 4px 14px rgba(0,0,0,.35);
+  --shadow-lg:0 18px 50px rgba(0,0,0,.55);
+  --ring:0 0 0 3px rgba(16,185,129,.22);
+  color-scheme: dark;
+}
+
+html,body{ height:100%; }
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+  font-size:14px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+button{ font-family:inherit; }
+input,select,textarea{ font-family:inherit; font-size:14px; color:var(--text); }
+kbd{ font-family:inherit; }
+.hidden{ display:none !important; }
+.muted{ color:var(--text-3); }
+.small{ font-size:12.5px; }
+.center{ text-align:center; }
+.mt{ margin-top:14px; }
+.mb{ margin-bottom:14px; }
+.sep{ border:none; border-top:1px solid var(--border); margin:16px 0; }
+code{ background:var(--surface-3); border:1px solid var(--border); padding:2px 7px; border-radius:6px; font-size:12.5px; color:var(--accent-strong); }
+a{ color:var(--accent-strong); }
+.ic{ vertical-align:-3px; flex-shrink:0; }
+
+/* ================= LOGIN ================= */
+.login-screen{
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(900px 460px at 85% -10%, var(--accent-soft), transparent 60%),
+    radial-gradient(700px 420px at 0% 110%, var(--info-soft), transparent 55%),
+    var(--bg);
+  padding:24px;
+}
+.login-card{
+  width:100%; max-width:400px; background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; padding:32px 30px 24px; box-shadow:var(--shadow-lg); text-align:center;
+}
+.login-brand{ display:flex; align-items:center; gap:12px; justify-content:center; margin-bottom:22px; }
+.brand-mark{
+  width:44px; height:44px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center;
+  background:var(--accent-soft); color:var(--accent-strong); border:1px solid var(--accent-border);
+}
+.login-brand .brand-mark{ width:48px; height:48px; }
+.login-title{ font-size:24px; font-weight:800; letter-spacing:-.4px; text-align:left; line-height:1.2; }
+.login-tag{ font-size:12.5px; color:var(--text-3); text-align:left; }
+.role-picker{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:18px; }
+.role-card{
+  background:var(--surface-2); border:1px solid var(--border); border-radius:11px; padding:14px 6px 12px;
+  cursor:pointer; color:var(--text-2); transition:.15s; display:flex; flex-direction:column; align-items:center; gap:7px;
+  font-weight:600; font-size:13px;
+}
+.role-card svg{ color:var(--text-4); }
+.role-card:hover{ border-color:var(--border-strong); }
+.role-card.active{ border-color:var(--accent); background:var(--accent-soft); color:var(--accent-strong); box-shadow:var(--ring); }
+.role-card.active svg{ color:var(--accent-strong); }
+.passcode-area{ text-align:left; animation:fadeUp .18s ease; }
+@keyframes fadeUp{ from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
+.pass-head{ display:flex; align-items:center; justify-content:space-between; font-weight:600; margin-bottom:12px; font-size:13.5px; }
+.link-btn{ background:none; border:none; color:var(--text-3); font-size:12.5px; cursor:pointer; }
+.link-btn:hover{ color:var(--accent-strong); }
+.pass-display{
+  background:var(--surface-3); border:1px solid var(--border); border-radius:11px;
+  padding:15px; display:flex; justify-content:center; gap:10px; margin-bottom:14px;
+}
+.dot{ width:11px; height:11px; border-radius:50%; background:var(--border-strong); }
+.dot.on{ background:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+.keypad{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+.key{
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  border-radius:10px; padding:13px 0; font-size:16px; font-weight:600; cursor:pointer; transition:.12s;
+}
+.key:hover{ border-color:var(--border-strong); background:var(--surface-3); }
+.key:active{ transform:scale(.96); }
+.login-error{ color:var(--danger); font-size:12.5px; min-height:18px; margin-top:10px; }
+.login-hint{ margin-top:18px; color:var(--text-4); font-size:12px; }
+
+/* ================= LAYOUT ================= */
+.app{ display:flex; min-height:100vh; }
+.sidebar{
+  width:248px; position:fixed; inset:0 auto 0 0; background:var(--surface);
+  border-right:1px solid var(--border); display:flex; flex-direction:column; z-index:40;
+}
+.brand{ display:flex; align-items:center; gap:11px; padding:18px 16px 14px; font-size:16.5px; font-weight:800; letter-spacing:-.3px; }
+.brand-name{ white-space:nowrap; }
+.nav{ flex:1; overflow-y:auto; padding:6px 10px; display:flex; flex-direction:column; gap:2px; }
+.nav-label-sec{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--text-4); padding:14px 12px 6px; }
+.nav-item{
+  position:relative; display:flex; align-items:center; gap:11px; padding:9px 12px; border-radius:9px;
+  color:var(--text-3); cursor:pointer; font-weight:500; font-size:13.5px; transition:.13s;
+}
+.nav-item:hover{ background:var(--surface-2); color:var(--text); }
+.nav-item.active{ background:var(--accent-soft); color:var(--accent-strong); font-weight:600; }
+.nav-item.active::before{ content:''; position:absolute; left:-10px; top:8px; bottom:8px; width:3px; border-radius:3px; background:var(--accent); }
+.nav-item svg{ color:inherit; }
+.sidebar-foot{ padding:14px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:10px; }
+.storage-pill{
+  display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--text-4);
+  background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:7px 10px;
+}
+.sp-dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); }
+
+.main{ margin-left:248px; flex:1; min-width:0; display:flex; flex-direction:column; }
+.topbar{
+  height:60px; position:sticky; top:0; z-index:30; display:flex; align-items:center; justify-content:space-between;
+  gap:16px; padding:0 24px; background:color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--border);
+}
+.topbar-title h2{ font-size:16.5px; font-weight:700; letter-spacing:-.2px; }
+.topbar-date{ font-size:12px; color:var(--text-4); }
+.topbar-actions{ display:flex; align-items:center; gap:10px; }
+.search-trigger{
+  display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--border);
+  border-radius:9px; padding:7px 10px; width:250px; color:var(--text-4); cursor:pointer; font-size:13px; transition:.15s;
+}
+.search-trigger:hover{ border-color:var(--border-strong); }
+.search-trigger span{ flex:1; text-align:left; }
+.search-trigger kbd{
+  background:var(--surface-3); border:1px solid var(--border); border-radius:5px; padding:1px 6px;
+  font-size:10.5px; color:var(--text-4); font-weight:600;
+}
+.user-chip{ display:flex; align-items:center; gap:10px; }
+.user-meta{ display:flex; flex-direction:column; line-height:1.25; min-width:0; }
+.user-name{ font-weight:600; font-size:13px; white-space:nowrap; }
+.user-role{ font-size:11px; color:var(--text-4); text-transform:uppercase; letter-spacing:.5px; }
+.avatar{
+  width:34px; height:34px; border-radius:50%; background:var(--accent-soft); color:var(--accent-strong);
+  border:1px solid var(--accent-border); display:inline-flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:12.5px; flex-shrink:0;
+}
+#view{ padding:26px 24px 40px; max-width:1280px; width:100%; margin:0 auto; }
+
+/* ================= PAGE HEAD ================= */
+.page-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin-bottom:20px; flex-wrap:wrap; }
+.page-head h1{ font-size:21px; font-weight:700; letter-spacing:-.3px; display:flex; align-items:center; gap:10px; }
+.page-sub{ color:var(--text-3); font-size:13px; margin-top:2px; }
+.page-actions{ display:flex; gap:9px; flex-wrap:wrap; }
+.count-pill{ background:var(--surface-3); border:1px solid var(--border); color:var(--text-2); font-size:12.5px; padding:1px 9px; border-radius:20px; font-weight:600; }
+
+/* ================= CARDS ================= */
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:13px;
+  padding:20px; box-shadow:var(--shadow-sm);
+}
+.card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+.card-head h3{ font-size:14.5px; font-weight:600; letter-spacing:-.2px; }
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+.grid-checkin{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-settings{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.section-title{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--text-4); margin:22px 0 12px; }
+
+/* ================= STAT CARDS ================= */
+.stat-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:14px; }
+.stat-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:13px; padding:16px;
+  display:flex; flex-direction:column; gap:2px; position:relative; transition:.15s; cursor:pointer;
+}
+.stat-card:hover{ border-color:var(--border-strong); box-shadow:var(--shadow-md); transform:translateY(-1px); }
+.stat-icon{
+  width:30px; height:30px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center;
+  margin-bottom:8px; background:var(--surface-3); color:var(--text-2);
+}
+.stat-icon.green{ background:var(--accent-soft); color:var(--accent-strong); }
+.stat-icon.amber{ background:var(--warn-soft); color:var(--warn); }
+.stat-icon.red{ background:var(--danger-soft); color:var(--danger); }
+.stat-icon.blue{ background:var(--info-soft); color:var(--info); }
+.stat-value{ font-size:22px; font-weight:700; letter-spacing:-.4px; }
+.stat-label{ color:var(--text-3); font-size:12.5px; }
+.stat-trend{ font-size:11.5px; color:var(--text-4); margin-top:2px; }
+.tone-green{ color:var(--accent-strong); } .tone-amber{ color:var(--warn); } .tone-red{ color:var(--danger); } .tone-blue{ color:var(--info); }
+
+/* ================= BADGES / METER ================= */
+.badge{
+  display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600;
+  padding:3px 10px; border-radius:20px; white-space:nowrap; line-height:1.3;
+}
+.bdot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
+.b-active{ background:var(--accent-soft); color:var(--accent-strong); }
+.b-expiring{ background:var(--warn-soft); color:var(--warn); }
+.b-overdue{ background:var(--danger-soft); color:var(--danger); }
+.b-inactive{ background:var(--surface-3); color:var(--text-3); }
+.meter{ display:flex; flex-direction:column; gap:4px; min-width:120px; }
+.meter-track{ height:5px; border-radius:4px; background:var(--surface-3); overflow:hidden; }
+.meter-fill{ height:100%; border-radius:4px; transition:width .3s; }
+.meter-label{ font-size:10.5px; font-weight:600; }
+
+/* ================= BUTTONS ================= */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text-2); border-radius:9px; padding:9px 15px; font-weight:600;
+  cursor:pointer; transition:.13s; font-size:13px; white-space:nowrap; box-shadow:var(--shadow-sm);
+}
+.btn:hover{ border-color:var(--border-strong); color:var(--text); }
+.btn:active{ transform:translateY(.5px); }
+.btn:disabled{ opacity:.5; cursor:not-allowed; }
+.btn-primary{ background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 1px 2px rgba(5,150,105,.4); }
+.btn-primary:hover{ background:var(--accent-strong); border-color:var(--accent-strong); color:#fff; }
+.btn-danger{ background:var(--danger); border-color:var(--danger); color:#fff; }
+.btn-danger:hover{ filter:brightness(1.07); color:#fff; }
+.btn-ghost{ background:transparent; box-shadow:none; color:var(--text-3); }
+.btn-ghost:hover{ background:var(--surface-2); color:var(--text); }
+.btn-sm{ padding:6px 11px; font-size:12.5px; border-radius:8px; }
+.btn-block{ width:100%; justify-content:center; }
+.icon-btn{
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text-3); width:32px; height:32px;
+  border-radius:9px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:.13s; flex-shrink:0;
+}
+.icon-btn:hover{ border-color:var(--border-strong); color:var(--text); }
+.icon-btn.danger:hover{ color:var(--danger); border-color:var(--danger-border); background:var(--danger-soft); }
+.icon-btn.primary-soft:hover{ color:var(--accent-strong); border-color:var(--accent-border); background:var(--accent-soft); }
+
+/* ================= FORMS ================= */
+.toolbar{ display:flex; gap:9px; flex-wrap:wrap; padding:14px; border-bottom:1px solid var(--border); align-items:center; }
+.search-input, .input{
+  background:var(--surface-2); border:1px solid var(--border); border-radius:9px; padding:8.5px 12px;
+  outline:none; transition:.15s; color:var(--text); width:100%;
+}
+.search-input{ min-width:210px; flex:1; }
+.search-input:focus, .input:focus{ border-color:var(--accent); box-shadow:var(--ring); }
+.input{ margin-top:0; }
+input[type="date"].input{ min-height:38px; }
+textarea.input{ resize:vertical; min-height:46px; }
+.select{
+  background:var(--surface-2); border:1px solid var(--border); border-radius:9px; padding:8.5px 10px;
+  outline:none; cursor:pointer; color:var(--text); transition:.15s;
+}
+.select:focus{ border-color:var(--accent); box-shadow:var(--ring); }
+.field{ margin-bottom:13px; }
+.field label{ display:block; font-size:12px; font-weight:600; color:var(--text-3); margin-bottom:5px; }
+.field .hint{ font-size:11.5px; color:var(--text-4); margin-top:3px; }
+.form-grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:0 14px; }
+.form-grid-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 14px; }
+.btn-row{ display:flex; gap:9px; flex-wrap:wrap; margin-top:12px; }
+
+/* ================= TABLES ================= */
+.table-wrap{ overflow-x:auto; }
+.table{ width:100%; border-collapse:collapse; }
+.table th{
+  text-align:left; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.6px;
+  color:var(--text-4); padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap;
+}
+.table td{ padding:12px; border-bottom:1px solid var(--border); vertical-align:middle; font-size:13.5px; }
+.table tbody tr{ transition:background .1s; }
+.table tbody tr:hover{ background:var(--surface-2); }
+.table tbody tr.clickable-row{ cursor:pointer; }
+.table tbody tr.clickable-row:hover{ background:var(--accent-soft); }
+.table tbody tr:last-child td{ border-bottom:none; }
+.empty-td{ text-align:center; color:var(--text-4); padding:32px !important; }
+.cell-user{ display:flex; align-items:center; gap:10px; }
+.cell-user > div{ display:flex; flex-direction:column; line-height:1.3; }
+.cell-user b{ font-weight:600; }
+.plan-chip{
+  background:var(--surface-3); border:1px solid var(--border); border-radius:7px;
+  padding:2px 9px; font-size:12px; font-weight:600; color:var(--text-2); white-space:nowrap;
+}
+.td-status{ min-width:170px; }
+.row-actions{ display:flex; gap:4px; align-items:center; justify-content:flex-end; }
+.row-actions .icon-btn{ width:29px; height:29px; background:transparent; border-color:transparent; opacity:.65; }
+.row-actions .icon-btn:hover{ opacity:1; background:var(--surface-2); border-color:var(--border); }
+.amt-pos{ color:var(--accent-strong); font-weight:600; }
+.amt-neg{ color:var(--danger); font-weight:600; }
+.numeric{ text-align:right; }
+.th-numeric{ text-align:right; }
+
+/* ================= LISTS ================= */
+.list{ display:flex; flex-direction:column; gap:8px; }
+.list-row{
+  display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border);
+  border-radius:11px; padding:11px 14px; transition:.13s;
+}
+.list-row:hover{ border-color:var(--border-strong); }
+.list-main{ display:flex; align-items:center; gap:11px; flex:1; min-width:0; }
+.list-main > div{ display:flex; flex-direction:column; line-height:1.3; min-width:0; }
+.list-main b{ font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.list-click{ cursor:pointer; }
+.list-click:hover{ border-color:var(--accent-border); box-shadow:var(--shadow-sm); }
+
+/* ================= MODALS / OVERLAYS ================= */
+.overlay{
+  position:fixed; inset:0; background:rgba(15,23,42,.45); backdrop-filter:blur(3px);
+  display:flex; align-items:flex-start; justify-content:center; z-index:100; padding:7vh 16px; overflow-y:auto;
+}
+.modal{
+  background:var(--surface); border:1px solid var(--border-strong); border-radius:15px; width:100%; max-width:540px;
+  box-shadow:var(--shadow-lg); animation:fadeUp .16s ease; margin-bottom:7vh;
+}
+.modal-lg{ max-width:780px; }
+.modal-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); }
+.modal-head h3{ font-size:15px; font-weight:700; letter-spacing:-.2px; }
+.modal-body{ padding:20px; }
+.modal-foot{ display:flex; justify-content:flex-end; gap:9px; padding:14px 20px; border-top:1px solid var(--border); }
+.confirm-body{ display:flex; gap:12px; align-items:flex-start; }
+.confirm-ic{ width:34px; height:34px; border-radius:10px; background:var(--danger-soft); color:var(--danger); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+.confirm-body p{ font-size:13.5px; color:var(--text-2); }
+
+/* ================= DRAWER ================= */
+.overlay .drawer{
+  background:var(--surface); border:1px solid var(--border-strong); border-radius:0; width:100%; max-width:430px;
+  box-shadow:var(--shadow-lg); animation:slideL .22s ease; align-self:stretch; margin-left:auto; display:flex; flex-direction:column;
+}
+@keyframes slideL{ from{transform:translateX(40px);opacity:0} to{transform:none;opacity:1} }
+.drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); }
+.drawer-head h3{ font-size:15px; font-weight:700; }
+.drawer-body{ padding:20px; overflow-y:auto; flex:1; }
+.drawer-foot{ padding:14px 20px; border-top:1px solid var(--border); display:flex; gap:9px; flex-wrap:wrap; }
+
+/* ================= TOASTS ================= */
+#toast-root{ position:fixed; bottom:22px; right:22px; z-index:300; display:flex; flex-direction:column; gap:9px; }
+.toast{
+  display:flex; align-items:center; gap:9px; background:var(--surface); border:1px solid var(--border-strong);
+  color:var(--text-2); padding:11px 14px; border-radius:11px; box-shadow:var(--shadow-lg);
+  font-size:13px; font-weight:500; max-width:360px; transition:.3s; cursor:pointer;
+}
+.toast svg{ color:var(--info); }
+.toast.success svg{ color:var(--accent); }
+.toast.error svg{ color:var(--danger); }
+.toast .tt{ flex:1; }
+.toast-action{ background:var(--accent-soft); color:var(--accent-strong); border:1px solid var(--accent-border); border-radius:7px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; }
+.toast.out{ opacity:0; transform:translateX(16px); }
+
+/* ================= COMMAND PALETTE ================= */
+.palette-overlay{
+  position:fixed; inset:0; background:rgba(15,23,42,.45); backdrop-filter:blur(3px);
+  display:flex; align-items:flex-start; justify-content:center; z-index:200; padding:12vh 16px 20px;
+}
+.palette{
+  width:100%; max-width:560px; background:var(--surface); border:1px solid var(--border-strong);
+  border-radius:14px; box-shadow:var(--shadow-lg); overflow:hidden; animation:fadeUp .14s ease; max-height:70vh; display:flex; flex-direction:column;
+}
+.palette-input-row{ display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--border); }
+.palette-input{
+  flex:1; border:none; outline:none; background:transparent; font-size:15px; color:var(--text);
+}
+.palette-results{ overflow-y:auto; padding:8px; }
+.pal-item{
+  display:flex; align-items:center; gap:11px; padding:9px 11px; border-radius:9px; cursor:pointer; font-size:13.5px;
+}
+.pal-item:hover{ background:var(--surface-2); }
+.pal-item.sel{ background:var(--accent-soft); color:var(--accent-strong); }
+.pal-item .p-ic{ width:30px; height:30px; border-radius:8px; background:var(--surface-3); display:inline-flex; align-items:center; justify-content:center; color:var(--text-3); flex-shrink:0; }
+.pal-item.sel .p-ic{ background:var(--accent); color:#fff; }
+.pal-item .p-main{ flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.25; }
+.pal-item .p-sub{ font-size:11.5px; color:var(--text-4); }
+.pal-sec{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--text-4); padding:10px 12px 4px; }
+.pal-empty{ padding:24px; text-align:center; color:var(--text-4); font-size:13px; }
+
+/* ================= CHARTS ================= */
+.chart-box{ position:relative; height:240px; }
+.chart-box p{ text-align:center; padding-top:90px; color:var(--text-4); font-size:12.5px; }
+
+/* ================= TABS ================= */
+.tabs{ display:flex; gap:6px; margin-bottom:14px; border-bottom:1px solid var(--border); }
+.tab{
+  background:none; border:none; border-bottom:2px solid transparent; padding:8px 12px; font-size:13px;
+  font-weight:600; color:var(--text-3); cursor:pointer; margin-bottom:-1px;
+}
+.tab:hover{ color:var(--text); }
+.tab.active{ color:var(--accent-strong); border-bottom-color:var(--accent); }
+
+/* ================= QR ================= */
+.qr-box{ text-align:center; margin-bottom:14px; }
+.qr-img{ width:210px; height:210px; border-radius:12px; border:1px solid var(--border); background:#fff; padding:10px; }
+
+/* ================= PLANS ================= */
+.plan-day{ display:flex; gap:10px; margin-bottom:8px; align-items:flex-start; }
+.plan-day-label{ width:112px; flex-shrink:0; font-size:12.5px; font-weight:600; padding-top:9px; color:var(--text-3); }
+.plan-textarea{ min-height:56px; }
+.plan-text{
+  white-space:pre-wrap; font-family:inherit; font-size:13px; background:var(--surface-2);
+  border:1px solid var(--border); border-radius:12px; padding:16px; max-height:420px; overflow-y:auto; color:var(--text-2);
+}
+
+/* ================= POS ================= */
+.product-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(185px,1fr)); gap:13px; }
+.product-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:13px;
+  padding:18px 16px 15px; display:flex; flex-direction:column; align-items:center; gap:5px; transition:.15s;
+}
+.product-card:hover{ border-color:var(--border-strong); box-shadow:var(--shadow-md); transform:translateY(-2px); }
+.p-emoji{
+  width:44px; height:44px; border-radius:11px; background:var(--surface-3); color:var(--text-2);
+  display:flex; align-items:center; justify-content:center; margin-bottom:4px;
+}
+.p-name{ font-weight:600; font-size:13px; line-height:1.35; text-align:center; min-height:35px; display:flex; align-items:center; }
+.p-price{ font-weight:700; color:var(--accent-strong); font-size:14px; }
+.stock-badge{ font-size:11px; font-weight:600; padding:2px 9px; border-radius:20px; }
+.st-ok{ background:var(--accent-soft); color:var(--accent-strong); }
+.st-low{ background:var(--warn-soft); color:var(--warn); }
+.st-out{ background:var(--danger-soft); color:var(--danger); }
+.checkout-cust{ display:flex; gap:8px; margin-bottom:14px; }
+.cust-btn{
+  flex:1; background:var(--surface-2); border:1px solid var(--border); border-radius:10px;
+  padding:10px; font-weight:600; cursor:pointer; color:var(--text-3); display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.cust-btn.active{ border-color:var(--accent); background:var(--accent-soft); color:var(--accent-strong); }
+.co-total{
+  display:flex; justify-content:space-between; align-items:center; background:var(--surface-2);
+  border:1px solid var(--border); border-radius:11px; padding:13px 16px; margin-top:12px; font-size:14px; font-weight:600;
+}
+.co-total b{ font-size:19px; color:var(--accent-strong); }
+.qty{ display:flex; align-items:center; gap:8px; }
+.qty span{ font-weight:600; min-width:20px; text-align:center; }
+.receipt{ font-family:'Inter',sans-serif; font-size:13px; color:var(--text); }
+.receipt .r-head{ text-align:center; border-bottom:1px dashed var(--border); padding-bottom:12px; margin-bottom:12px; }
+.receipt .r-head b{ font-size:16px; }
+.receipt .r-row{ display:flex; justify-content:space-between; gap:12px; padding:2.5px 0; }
+.receipt .r-rule{ border-top:1px dashed var(--border); margin:10px 0; }
+
+/* ================= SCHEDULE ================= */
+.schedule-table th, .schedule-table td{ text-align:center; }
+.shift-cell{ min-width:108px; }
+.shift-chip{
+  display:inline-flex; align-items:center; gap:5px; background:var(--accent-soft); color:var(--accent-strong);
+  font-size:11.5px; font-weight:600; border-radius:7px; padding:3px 7px; margin:1.5px; border:1px solid var(--accent-border);
+}
+.shift-x{ background:none; border:none; color:inherit; cursor:pointer; font-size:10px; opacity:.5; padding:0 2px; line-height:1; }
+.shift-x:hover{ opacity:1; }
+
+/* ================= LOCKERS ================= */
+.locker-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(236px,1fr)); gap:13px; }
+.locker-card{ background:var(--surface); border:1px solid var(--border); border-radius:13px; padding:16px; transition:.15s; }
+.locker-card:hover{ box-shadow:var(--shadow-md); }
+.locker-card.lk-occupied{ border-left:4px solid var(--accent); }
+.locker-card.lk-overdue{ border-left:4px solid var(--danger); }
+.locker-card.lk-vacant{ border-left:4px solid var(--border-strong); opacity:.88; }
+.lk-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.lk-num{ font-weight:700; font-size:14px; }
+.lk-mem{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.lk-mem > div{ display:flex; flex-direction:column; line-height:1.3; }
+.lk-meta{ display:flex; justify-content:space-between; font-size:12px; color:var(--text-3); margin-bottom:12px; flex-wrap:wrap; gap:4px; }
+.lk-meta b{ color:var(--text); font-weight:600; }
+
+/* ================= DRAWER: member profile ================= */
+.profile-head{ display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+.profile-head .avatar{ width:52px; height:52px; font-size:18px; border-radius:14px; }
+.profile-name{ font-size:18px; font-weight:700; letter-spacing:-.3px; }
+.profile-sub{ font-size:12.5px; color:var(--text-3); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.details-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+.detail-item{ background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
+.detail-item .k{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text-4); margin-bottom:2px; }
+.detail-item .v{ font-weight:600; font-size:13.5px; }
+.mini-head{ display:flex; align-items:center; justify-content:space-between; margin:20px 0 10px; }
+.mini-head h4{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text-4); }
+.mini-head a{ font-size:12px; }
+
+/* ================= ACTIVITY / EMPTY ================= */
+.empty-state{ text-align:center; color:var(--text-4); padding:60px 20px; font-size:14px; }
+.empty-state .es-ic{ width:56px; height:56px; margin:0 auto 14px; border-radius:16px; background:var(--surface-2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-4); }
+.activity-row{ display:flex; gap:12px; padding:9px 0; border-bottom:1px solid var(--border); }
+.activity-row:last-child{ border-bottom:none; }
+.activity-ic{ width:30px; height:30px; border-radius:8px; background:var(--surface-3); color:var(--text-3); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.activity-ic.green{ background:var(--accent-soft); color:var(--accent-strong); }
+.activity-ic.red{ background:var(--danger-soft); color:var(--danger); }
+.activity-ic.amber{ background:var(--warn-soft); color:var(--warn); }
+
+/* ================= PRINT ================= */
+@media print{
+  body *{ visibility:hidden; }
+  .print-area, .print-area *{ visibility:visible; }
+  .print-area{ position:fixed; inset:0; overflow:visible; background:#fff !important; color:#000 !important; padding:24px; }
+  .no-print{ display:none !important; }
+}
+
+/* ================= SCROLLBAR ================= */
+::-webkit-scrollbar{ width:9px; height:9px; }
+::-webkit-scrollbar-thumb{ background:var(--border-strong); border-radius:8px; }
+::-webkit-scrollbar-thumb:hover{ background:var(--text-4); }
+
+/* ================= RESPONSIVE ================= */
+@media (max-width:1150px){
+  .stat-grid{ grid-template-columns:repeat(3,1fr); }
+  .grid-2, .grid-checkin, .grid-settings{ grid-template-columns:1fr; }
+}
+@media (max-width:920px){
+  .sidebar{ width:64px; }
+  .brand{ justify-content:center; padding:16px 0; }
+  .brand-name, .nav-label, .sidebar-foot .storage-pill, .sidebar-foot .btn span{ display:none; }
+  .nav-item{ justify-content:center; padding:11px 0; }
+  .nav-item.active::before{ left:-10px; }
+  .main{ margin-left:64px; }
+  .search-trigger{ width:170px; }
+  .search-trigger span{ display:none; }
+  #view{ padding:18px 14px 32px; }
+}
+@media (max-width:600px){
+  .stat-grid{ grid-template-columns:repeat(2,1fr); }
+  .form-grid-2, .form-grid-3{ grid-template-columns:1fr; }
+  .topbar{ padding:0 12px; }
+  .user-meta{ display:none; }
+  .topbar-date{ display:none; }
+}
+
+</style>
+  <!-- Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- QR camera scanner -->
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- ================= LOGIN ================= -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="login-brand">
+        <span class="brand-mark"><svg class="ic" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4M3 10l7-7M14 21l7-7"/></svg></span>
+        <div>
+          <h1 class="login-title" id="login-gym-name">GYM City</h1>
+          <p class="login-tag">Gym Management System</p>
+        </div>
+      </div>
+
+      <div id="role-picker" class="role-picker"></div>
+
+      <div id="passcode-area" class="passcode-area hidden">
+        <div class="pass-head">
+          <span id="pass-role-label">Enter passcode</span>
+          <button class="link-btn" id="btn-back-roles">← Back</button>
+        </div>
+        <div class="pass-display" id="pass-dots"></div>
+        <div class="keypad" id="keypad"></div>
+        <button class="btn btn-primary btn-block" id="btn-unlock" disabled>Unlock</button>
+        <p class="login-error" id="login-error"></p>
+      </div>
+
+      <p class="login-hint">Demo passcodes — Manager <b>1234</b> · Front Desk <b>1111</b> · Trainer <b>2222</b></p>
+    </div>
+  </div>
+
+  <!-- ================= APP ================= -->
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4M3 10l7-7M14 21l7-7"/></svg></span>
+        <span class="brand-name" id="brand-name">GYM City</span>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <div class="sidebar-foot">
+        <div class="storage-pill" title="Data stored locally in this browser">
+          <span class="sp-dot"></span> Local data · <span id="storage-size">0 KB</span>
+        </div>
+        <button class="btn btn-ghost btn-block" id="btn-logout">Log out</button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h2 id="view-title">Dashboard</h2>
+          <span class="topbar-date" id="topbar-date"></span>
+        </div>
+        <div class="topbar-actions">
+          <button class="search-trigger" id="top-search" title="Search (Ctrl K)">
+            <svg class="ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.4-3.4"/></svg>
+            <span>Search members, views…</span>
+            <kbd>Ctrl K</kbd>
+          </button>
+          <button class="icon-btn" id="btn-theme" title="Toggle theme"></button>
+          <div class="user-chip">
+            <span class="avatar" id="user-avatar">S</span>
+            <div class="user-meta">
+              <span class="user-name" id="user-name"></span>
+              <span class="user-role" id="user-role"></span>
+            </div>
+            <button class="icon-btn" id="btn-logout-top" title="Log out"></button>
+          </div>
+        </div>
+      </header>
+      <main id="view"></main>
+    </div>
+  </div>
+
+  <!-- Command palette -->
+  <div id="palette-root"></div>
+
+  <!-- Global containers -->
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+
+
+  <script>
+/* === js/storage.js === */
+/* ============================================================
+   GYM City — Storage layer (localStorage persistence + seed data)
+   ============================================================ */
+window.Store = (function(){
+  'use strict';
+  var KEY = 'gymflow_v2';
+  var DAY = 86400000;
+
+  var PLAN_FEES = { monthly: 2500, quarterly: 7000, annual: 24000 };
+  var PLAN_DAYS = { monthly: 30, quarterly: 90, annual: 365 };
+
+  function uid(){ return 'id' + Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-4); }
+  function startOfDay(ms){ var d = new Date(ms || Date.now()); d.setHours(0,0,0,0); return d.getTime(); }
+  function today(){ return startOfDay(); }
+  function daysFromNow(n){ return today() + n * DAY; }
+  function now(){ return Date.now(); }
+  function monthRange(ms){
+    var d = new Date(ms || Date.now());
+    return { start: new Date(d.getFullYear(), d.getMonth(), 1).getTime(),
+             end:   new Date(d.getFullYear(), d.getMonth()+1, 1).getTime() };
+  }
+
+  /* ---------------- seed demo data ---------------- */
+  function seed(){
+    var u_mgr = { id:'u_mgr', name:'Salman Ahmed', role:'manager',   passcode:'1234' };
+    var u_fd  = { id:'u_fd',  name:'Rashid Ali',   role:'frontdesk', passcode:'1111' };
+    var u_t1  = { id:'u_t1',  name:'Ali Raza',     role:'trainer',   passcode:'2222' };
+    var u_t2  = { id:'u_t2',  name:'Usman Tariq',  role:'trainer',   passcode:'3333' };
+
+    function member(name, phone, plan, renewIn, trainerId, startOffset){
+      return { id:uid(), name:name, phone:phone, plan:plan,
+        start: daysFromNow(startOffset), renewal: daysFromNow(renewIn),
+        trainerId: trainerId || null, fee: PLAN_FEES[plan], active:true,
+        notes:'', joinedAt: daysFromNow(startOffset) };
+    }
+    var members = [
+      member('Ahmed Khan',   '0300 1234567', 'monthly',   21,  'u_t1', -200),
+      member('Bilal Hussain','0301 2345678', 'quarterly', 4,   'u_t1', -90),
+      member('Danish Ali',   '0302 3456789', 'annual',    3,   'u_t2', -300),
+      member('Fahad Mehmood','0303 4567890', 'monthly',  -6,   'u_t1', -40),
+      member('Hamza Sheikh', '0304 5678901', 'monthly',   12,  'u_t2', -18),
+      member('Imran Yousaf', '0305 6789012', 'quarterly', 55,  null,  -100),
+      member('Kashif Raza',  '0306 7890123', 'monthly',  -12,  'u_t1', -60),
+      member('Sana Javed',   '0307 8901234', 'quarterly', 30,  'u_t2', -85),
+      member('Zeeshan Ahmed','0308 9012345', 'annual',    200, 'u_t1', -160),
+      member('Noman Khalid', '0309 0123456', 'monthly',  -3,   null,  -25)
+    ];
+
+    var products = [
+      { id:uid(), name:'Whey Protein 1kg',        emoji:'', price:8500, stock:8,  threshold:5 },
+      { id:uid(), name:'Creatine Monohydrate',    emoji:'', price:3200, stock:3,  threshold:5 },
+      { id:uid(), name:'Pre-Workout (30 serv)',   emoji:'', price:2800, stock:6,  threshold:5 },
+      { id:uid(), name:'BCAA Powder',             emoji:'', price:2400, stock:2,  threshold:5 },
+      { id:uid(), name:'Protein Bar',             emoji:'', price:300,  stock:20, threshold:5 },
+      { id:uid(), name:'Gym Shaker 700ml',        emoji:'', price:900,  stock:10, threshold:5 },
+      { id:uid(), name:'Lifting Gloves',          emoji:'', price:1200, stock:0,  threshold:5 },
+      { id:uid(), name:'Knee Sleeves (pair)',     emoji:'', price:1500, stock:4,  threshold:5 }
+    ];
+
+    var tx = [];
+    function txIn(daysAgo, amount, cat, desc, memberId){ tx.push({ id:uid(), ts: daysFromNow(-daysAgo)+8*3600000, type:'income',  category:cat, amount:amount, desc:desc, memberId:memberId || null }); }
+    function txEx(daysAgo, amount, cat, desc){ tx.push({ id:uid(), ts: daysFromNow(-daysAgo)+11*3600000, type:'expense', category:cat, amount:amount, desc:desc, memberId:null }); }
+    txIn(2, 2500,  'Dues',       'Renewal — Hamza Sheikh', members[4].id);
+    txIn(8, 2500,  'Dues',       'Renewal — Ahmed Khan', members[0].id);
+    txIn(15, 7000, 'Dues',       'Quarterly renewal — Bilal Hussain', members[1].id);
+    txIn(22, 8500, 'Supplements','POS sale — Whey Protein 1kg ×1');
+    txIn(30, 900,  'Supplements','POS sale — Gym Shaker ×1');
+    txEx(3,  25000,'Rent',       'Gym hall rent');
+    txEx(10, 40000,'Salaries',   'Staff salaries');
+    txEx(12, 8000, 'Utilities',  'Electricity & water');
+    txEx(20, 15000,'Equipment',  'Dumbbell set (new)');
+
+    var attendance = [];
+    function pushAtt(dayOffset, h, min, mIdx){ attendance.push({ id:uid(), ts: today()+dayOffset*DAY + h*3600000 + min*60000, memberId: members[mIdx].id }); }
+    pushAtt(0, 8, 15, 0); pushAtt(0, 8, 42, 1); pushAtt(0, 9, 5, 4);
+    pushAtt(0, 9, 28, 5); pushAtt(0, 10, 10, 7); pushAtt(0, 10, 40, 2);
+    pushAtt(-1, 8, 20, 0); pushAtt(-1, 9, 10, 2); pushAtt(-1, 10, 0, 6); pushAtt(-1, 11, 5, 8);
+    pushAtt(-2, 8, 30, 1); pushAtt(-2, 9, 45, 3); pushAtt(-2, 10, 25, 5); pushAtt(-2, 8, 5, 0);
+
+    var shifts = [];
+    function shift(staffName, role, day, start, end){ shifts.push({ id:uid(), staffName:staffName, role:role, day:day, start:start, end:end }); }
+    [0,1,2,3,4,5].forEach(function(d){ shift(u_fd.name,  'Front Desk', d, '08:00','16:00'); });
+    [0,2,4].forEach(function(d){ shift(u_t1.name, 'Trainer', d, '16:00','22:00'); });
+    [1,3,5].forEach(function(d){ shift(u_t2.name, 'Trainer', d, '10:00','16:00'); });
+    [0,1,2,3,4].forEach(function(d){ shift(u_mgr.name,'Manager', d, '11:00','19:00'); });
+
+    var lockers = [];
+    for (var i = 1; i <= 12; i++){ lockers.push({ id:uid(), num:i, memberId:null, fee:1000, keyWith:'frontdesk', note:'' }); }
+    lockers[0].memberId = members[0].id; lockers[0].keyWith = 'member';
+    lockers[2].memberId = members[4].id;
+    lockers[5].memberId = members[7].id; lockers[5].keyWith = 'member';
+    lockers[8].memberId = members[2].id;
+
+    var settings = {
+      gymName:'GYM City',
+      currency:'Rs',
+      planFee: { monthly:2500, quarterly:7000, annual:24000 },
+      planDays:{ monthly:30,  quarterly:90,  annual:365 },
+      reminderDays: 5,
+      lowStock: 5,
+      waReminder: 'Hi {name}! 👋 Friendly reminder from {gym}: your membership renewal date is {date}. Please renew to keep training without interruption. 💪',
+      waQuote: '{quote} — stay consistent! 💪 {gym}',
+      quotes: [
+        'Push yourself, because no one else is going to do it for you.',
+        'The pain you feel today will be the strength you feel tomorrow.',
+        "Don't stop when you're tired. Stop when you're done.",
+        'Sweat now, shine later.',
+        "Your body can stand almost anything. It's your mind that you have to convince.",
+        'Success starts with self-discipline.',
+        'Small progress is still progress. Keep going!'
+      ]
+    };
+
+    var activity = [
+      { id:uid(), ts: now()-2*3600000, actor:'Salman Ahmed', text:'Renewed membership — Hamza Sheikh (Rs 2,500)' },
+      { id:uid(), ts: now()-26*3600000, actor:'Rashid Ali',   text:'Completed POS sale — Rs 8,500' },
+      { id:uid(), ts: now()-30*3600000, actor:'Salman Ahmed', text:'Added member — Noman Khalid' },
+      { id:uid(), ts: now()-49*3600000, actor:'Salman Ahmed', text:'Paid gym hall rent — Rs 25,000' }
+    ];
+
+    return {
+      settings: settings,
+      users: [u_mgr, u_fd, u_t1, u_t2],
+      members: members,
+      products: products,
+      transactions: tx,
+      sales: [],
+      attendance: attendance,
+      plans: [],
+      shifts: shifts,
+      lockers: lockers,
+      activity: activity,
+      meta: { version:1, seededAt: now() }
+    };
+  }
+
+  /* ---------------- persistence ---------------- */
+  var data = null;
+
+  function load(){
+    if (data) return;
+    var raw = null;
+    try { raw = localStorage.getItem(KEY); } catch(e){}
+    if (raw){ try { data = JSON.parse(raw); } catch(e){ data = null; } }
+    if (!data || !data.members){ data = seed(); save(); }
+    if (!data.activity) data.activity = [];
+    if (!data.sales) data.sales = [];
+    save();
+  }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e){ console.error('Save failed', e); } if (window.Cloud && window.Cloud.pushLocal) window.Cloud.pushLocal(); }
+  function get(){ load(); return data; }
+
+  function importData(obj){ data = obj; save(); }
+  function exportJSON(){ return JSON.stringify(get(), null, 2); }
+  function resetDemo(){ data = seed(); save(); }
+  function clearAll(){
+    var s = get();
+    data = { settings: s.settings, users: s.users, members: [], products: [],
+             transactions: [], sales: [], attendance: [], plans: [], shifts: [],
+             lockers: [], activity: [], meta: { version:1 } };
+    save();
+  }
+
+  /* ---------------- activity / audit log ---------------- */
+  function log(actor, text){
+    get().activity.push({ id:uid(), ts:now(), actor:actor || 'System', text:text });
+    if (get().activity.length > 300) get().activity = get().activity.slice(-300);
+    save();
+  }
+  function activity(){ return get().activity.slice().sort(function(a,b){ return b.ts - a.ts; }); }
+
+  /* ---------------- members ---------------- */
+  function statusOf(m){
+    if (!m || m.active === false) return 'inactive';
+    var daysLeft = Math.ceil((m.renewal - today()) / DAY);
+    if (daysLeft < 0) return 'overdue';
+    if (daysLeft <= get().settings.reminderDays) return 'expiring';
+    return 'active';
+  }
+  function member(id){ return get().members.find(function(m){ return m.id === id; }) || null; }
+  function addMember(m, opts){
+    opts = opts || {};
+    if (!opts.keepId) m.id = uid();
+    m.joinedAt = m.joinedAt || m.start || now();
+    get().members.push(m);
+    save();
+    return m;
+  }
+  function updateMember(m){
+    var arr = get().members;
+    for (var i = 0; i < arr.length; i++){ if (arr[i].id === m.id){ arr[i] = m; save(); return; } }
+  }
+  function deleteMember(id){
+    var s = get();
+    var m = member(id);
+    s.members = s.members.filter(function(x){ return x.id !== id; });
+    s.attendance = s.attendance.filter(function(a){ return a.memberId !== id; });
+    s.plans = s.plans.filter(function(p){ return p.memberId !== id; });
+    s.lockers.forEach(function(l){ if (l.memberId === id) l.memberId = null; });
+    save();
+    return m;
+  }
+  function markPaid(m){
+    var s = get();
+    var fee = s.settings.planFee[m.plan] || 0;
+    var base = Math.max(today(), m.renewal);
+    m.renewal = base + (s.settings.planDays[m.plan] || 30) * DAY;
+    updateMember(m);
+    addTransaction({ type:'income', category:'Dues', amount:fee, desc:'Renewal — ' + m.name, memberId:m.id }, false);
+    return fee;
+  }
+  function renewalsUpcoming(days){
+    return get().members.filter(function(m){
+      if (m.active === false) return false;
+      var dl = Math.ceil((m.renewal - today()) / DAY);
+      return dl >= 0 && dl <= days;
+    }).sort(function(a,b){ return a.renewal - b.renewal; });
+  }
+  function memberPayments(id){
+    return get().transactions.filter(function(t){ return t.memberId === id && t.type === 'income'; })
+      .sort(function(a,b){ return b.ts - a.ts; });
+  }
+
+  /* ---------------- products / POS ---------------- */
+  function addProduct(p){ p.id = uid(); get().products.push(p); save(); return p; }
+  function updateProduct(p){
+    var arr = get().products;
+    for (var i = 0; i < arr.length; i++){ if (arr[i].id === p.id){ arr[i] = p; save(); return; } }
+  }
+  function deleteProduct(id){
+    get().products = get().products.filter(function(p){ return p.id !== id; });
+    save();
+  }
+  function sell(items, memberId, customerName){
+    var s = get();
+    var total = 0;
+    items.forEach(function(it){
+      var p = s.products.find(function(x){ return x.id === it.productId; });
+      if (!p) return;
+      p.stock -= it.qty;
+      total += it.qty * p.price;
+    });
+    s.sales.push({ id:uid(), ts:now(), items:items, memberId:memberId || null, customer:customerName || '', total:total });
+    addTransaction({ type:'income', category:'Supplements', amount:total,
+      desc:'POS sale' + (customerName ? ' — ' + customerName : ''), memberId: memberId || null }, false);
+    save();
+    return total;
+  }
+
+  /* ---------------- transactions ---------------- */
+  function addTransaction(t, shouldLog){
+    t.id = uid(); t.ts = t.ts || now();
+    get().transactions.push(t);
+    save();
+    if (shouldLog !== false && t.type === 'income' && t.category === 'Dues'){
+      var actor = Auth.current ? Auth.current() : null;
+      log(actor ? actor.name : 'System', 'Renewal payment — ' + (t.desc || ''));
+    }
+    return t;
+  }
+  function deleteTransaction(id){
+    get().transactions = get().transactions.filter(function(t){ return t.id !== id; });
+    save();
+  }
+  function revenueBetween(a, b){
+    return get().transactions.filter(function(t){ return t.type === 'income' && t.ts >= a && t.ts < b; })
+      .reduce(function(s, t){ return s + t.amount; }, 0);
+  }
+  function expensesBetween(a, b){
+    return get().transactions.filter(function(t){ return t.type === 'expense' && t.ts >= a && t.ts < b; })
+      .reduce(function(s, t){ return s + t.amount; }, 0);
+  }
+  function overdueDues(){
+    var s = get();
+    return s.members.reduce(function(sum, m){
+      return sum + (statusOf(m) === 'overdue' ? (s.settings.planFee[m.plan] || 0) : 0);
+    }, 0);
+  }
+
+  /* ---------------- attendance ---------------- */
+  function checkIn(memberId){
+    var rec = { id:uid(), ts:now(), memberId:memberId };
+    get().attendance.push(rec); save(); return rec;
+  }
+  function deleteAttendance(id){
+    get().attendance = get().attendance.filter(function(a){ return a.id !== id; });
+    save();
+  }
+  function checkinsOn(ms){
+    var d0 = startOfDay(ms), d1 = d0 + DAY;
+    return get().attendance.filter(function(a){ return a.ts >= d0 && a.ts < d1; });
+  }
+
+  /* ---------------- plans ---------------- */
+  function addPlan(p){ p.id = uid(); p.ts = now(); get().plans.push(p); save(); return p; }
+  function deletePlan(id){ get().plans = get().plans.filter(function(p){ return p.id !== id; }); save(); }
+
+  /* ---------------- shifts ---------------- */
+  function addShift(s){ s.id = uid(); get().shifts.push(s); save(); return s; }
+  function deleteShift(id){ get().shifts = get().shifts.filter(function(s){ return s.id !== id; }); save(); }
+
+  /* ---------------- lockers ---------------- */
+  function addLocker(l){ l.id = uid(); get().lockers.push(l); save(); return l; }
+  function updateLocker(l){
+    var arr = get().lockers;
+    for (var i = 0; i < arr.length; i++){ if (arr[i].id === l.id){ arr[i] = l; save(); return; } }
+  }
+  function deleteLocker(id){ get().lockers = get().lockers.filter(function(l){ return l.id !== id; }); save(); }
+
+  /* ---------------- users ---------------- */
+  function user(id){ return get().users.find(function(u){ return u.id === id; }) || null; }
+  function addUser(u){ u.id = uid(); get().users.push(u); save(); return u; }
+  function updateUser(u){
+    var arr = get().users;
+    for (var i = 0; i < arr.length; i++){ if (arr[i].id === u.id){ arr[i] = u; save(); return; } }
+  }
+  function deleteUser(id){
+    if (get().users.filter(function(u){ return u.role === 'manager'; }).length <= 1) return false;
+    get().users = get().users.filter(function(u){ return u.id !== id; });
+    save(); return true;
+  }
+
+  /* ---------------- CSV exports ---------------- */
+  function csvEscape(v){
+    v = String(v == null ? '' : v);
+    return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v;
+  }
+  function csvFrom(rows){ return rows.map(function(r){ return r.map(csvEscape).join(','); }).join('\n'); }
+
+  function exportMembersCSV(){
+    var s = get();
+    var head = ['Name','Phone','Plan','Start Date','Renewal Date','Status','Trainer','Fee','Notes'];
+    var rows = s.members.map(function(m){
+      var t = s.users.find(function(u){ return u.id === m.trainerId; });
+      return [m.name, m.phone, m.plan,
+        new Date(m.start).toLocaleDateString('en-CA'),
+        new Date(m.renewal).toLocaleDateString('en-CA'),
+        statusOf(m), t ? t.name : '', m.fee, (m.notes||'').replace(/\n/g,' ') ];
+    });
+    return csvFrom([head].concat(rows));
+  }
+  function exportTransactionsCSV(){
+    var head = ['Date','Type','Category','Description','Amount','Member'];
+    var rows = get().transactions.map(function(t){
+      var m = t.memberId ? member(t.memberId) : null;
+      return [ new Date(t.ts).toLocaleDateString('en-CA'), t.type, t.category, t.desc || '', t.amount, m ? m.name : '' ];
+    });
+    return csvFrom([head].concat(rows));
+  }
+  function exportAttendanceCSV(){
+    var head = ['Date','Time','Member'];
+    var rows = get().attendance.map(function(a){
+      var m = member(a.memberId);
+      return [ new Date(a.ts).toLocaleDateString('en-CA'), new Date(a.ts).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }), m ? m.name : '(deleted)' ];
+    });
+    return csvFrom([head].concat(rows));
+  }
+  function storageSize(){
+    try { return (localStorage.getItem(KEY) || '').length; } catch(e){ return 0; }
+  }
+
+  return {
+    DAY: DAY, uid: uid, now: now, today: today, daysFromNow: daysFromNow,
+    startOfDay: startOfDay, monthRange: monthRange, PLAN_FEES: PLAN_FEES, PLAN_DAYS: PLAN_DAYS,
+    get: get, save: save, importData: importData, exportJSON: exportJSON,
+    resetDemo: resetDemo, clearAll: clearAll, storageSize: storageSize,
+    log: log, activity: activity,
+    statusOf: statusOf, member: member, addMember: addMember, updateMember: updateMember,
+    deleteMember: deleteMember, markPaid: markPaid, renewalsUpcoming: renewalsUpcoming,
+    memberPayments: memberPayments,
+    addProduct: addProduct, updateProduct: updateProduct, deleteProduct: deleteProduct, sell: sell,
+    addTransaction: addTransaction, deleteTransaction: deleteTransaction,
+    revenueBetween: revenueBetween, expensesBetween: expensesBetween, overdueDues: overdueDues,
+    checkIn: checkIn, deleteAttendance: deleteAttendance, checkinsOn: checkinsOn,
+    addPlan: addPlan, deletePlan: deletePlan,
+    addShift: addShift, deleteShift: deleteShift,
+    addLocker: addLocker, updateLocker: updateLocker, deleteLocker: deleteLocker,
+    user: user, addUser: addUser, updateUser: updateUser, deleteUser: deleteUser,
+    exportMembersCSV: exportMembersCSV, exportTransactionsCSV: exportTransactionsCSV,
+    exportAttendanceCSV: exportAttendanceCSV
+  };
+})();
+
+;
+/* === js/auth.js === */
+/* ============================================================
+   GymFlow — Authentication & Role-Based Access Control (RBAC)
+   Icons: keys map to the UI icon library (see ui.js)
+   ============================================================ */
+window.Auth = (function(){
+  'use strict';
+
+  var MENU = [
+    { id:'dashboard', label:'Dashboard',  icon:'grid',      roles:['manager','frontdesk','trainer'] },
+    { id:'members',   label:'Members',    icon:'users',     roles:['manager','frontdesk','trainer'], trainerIcon:'user', trainerLabel:'Clients' },
+    { id:'checkin',   label:'Attendance', icon:'qr',        roles:['manager','frontdesk','trainer'] },
+    { id:'plans',     label:'Plans',      icon:'clipboard', roles:['manager','trainer'] },
+    { id:'pos',       label:'Store & POS',icon:'cart',      roles:['manager','frontdesk'] },
+    { id:'finance',   label:'Finances',   icon:'banknote',  roles:['manager'] },
+    { id:'schedule',  label:'Schedule',   icon:'calendar',  roles:['manager'] },
+    { id:'lockers',   label:'Lockers',    icon:'lock',      roles:['manager'] },
+    { id:'settings',  label:'Settings',   icon:'settings',  roles:['manager'] }
+  ];
+
+  function current(){
+    var id = localStorage.getItem('gymflow_session');
+    return Store.get().users.find(function(u){ return u.id === id; }) || null;
+  }
+  function canAccess(view){
+    var u = current();
+    var it = MENU.find(function(m){ return m.id === view; });
+    return !!(it && u && it.roles.indexOf(u.role) > -1);
+  }
+  function menu(){
+    var u = current();
+    var isTrainer = u && u.role === 'trainer';
+    return MENU.filter(function(m){ return u && m.roles.indexOf(u.role) > -1; }).map(function(m){
+      var clone = { id:m.id, label:m.label, icon:m.icon };
+      if (isTrainer && m.trainerLabel){ clone.label = m.trainerLabel; clone.icon = m.trainerIcon; }
+      return clone;
+    });
+  }
+  function login(role, code){
+    var u = Store.get().users.find(function(x){ return x.role === role && String(x.passcode) === String(code); });
+    if (u){ localStorage.setItem('gymflow_session', u.id); return u; }
+    return null;
+  }
+  function logout(){ localStorage.removeItem('gymflow_session'); }
+  function trainers(){ return Store.get().users.filter(function(u){ return u.role === 'trainer'; }); }
+  function roleLabel(r){ return { manager:'Manager', frontdesk:'Front Desk', trainer:'Trainer' }[r] || r; }
+
+  return {
+    MENU: MENU, current: current, canAccess: canAccess, menu: menu,
+    login: login, logout: logout, trainers: trainers, roleLabel: roleLabel
+  };
+})();
+
+;
+/* === js/ui.js === */
+/* ============================================================
+   GymFlow — UI toolkit: SVG icons, formatting, badges, meters,
+   modals, drawer, toasts, WhatsApp / QR helpers
+   ============================================================ */
+window.UI = (function(){
+  'use strict';
+
+  /* ---------------- SVG icon library (stroke-based) ---------------- */
+  var ICONS = {
+    grid:      '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+    users:     '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.3 3.4-5 6.5-5s5.7 1.7 6.5 5"/><circle cx="17.5" cy="9" r="2.6"/><path d="M16.5 15.3c2.6.4 4.5 1.9 5.2 4.2"/>',
+    user:      '<circle cx="12" cy="8" r="4"/><path d="M4 20c1.2-3.4 4.2-5.5 8-5.5s6.8 2.1 8 5.5"/>',
+    qr:        '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3.5v3.5H14z"/><path d="M20.5 14h.5M14 20.5h.5M18 17.5h2.5v2.5M14 17.5v.5"/>',
+    clipboard: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5A2 2 0 0 1 11 2.5h2a2 2 0 0 1 2 2V5H9z"/><path d="M9 11h6M9 15h4"/>',
+    cart:      '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3.5h2l2.3 11.7a1.6 1.6 0 0 0 1.6 1.3h8.1a1.6 1.6 0 0 0 1.6-1.2L20.8 8H6"/>',
+    banknote:  '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>',
+    calendar:  '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+    lock:      '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    settings:  '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.03-1.56V3a2 2 0 1 1 4 0v.09c0 .68.4 1.29 1.03 1.56a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9c.27.63.88 1.03 1.56 1.03H21a2 2 0 1 1 0 4h-.09c-.68 0-1.29.4-1.56 1.03z"/>',
+    search:    '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.4-3.4"/>',
+    sun:       '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    moon:      '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>',
+    logout:    '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>',
+    plus:      '<path d="M12 5v14M5 12h14"/>',
+    pencil:    '<path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
+    trash:     '<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+    message:   '<path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.5 0-2.9-.4-4.1-1L3 20l1-5.4A8.5 8.5 0 1 1 21 11.5z"/>',
+    x:         '<path d="M18 6L6 18M6 6l12 12"/>',
+    check:     '<path d="M20 6L9 17l-5-5"/>',
+    arrowRight:'<path d="M5 12h14M12 5l7 7-7 7"/>',
+    chevronD:  '<path d="M6 9l6 6 6-6"/>',
+    chevronR:  '<path d="M9 6l6 6-6 6"/>',
+    download:  '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+    upload:    '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
+    fileText:  '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>',
+    printer:   '<path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7" rx="1"/>',
+    alert:     '<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+    up:        '<path d="M22 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/>',
+    down:      '<path d="M22 18l-9.5-9.5-5 5L1 6"/><path d="M17 18h6v-6"/>',
+    clock:     '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    activity:  '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+    phone:     '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.3 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8.1 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.9 1.9z"/>',
+    copy:      '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    send:      '<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',
+    refresh:   '<path d="M23 4v6h-6M1 20v-6h6M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/>',
+    database:  '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.7-4 3-9 3s-9-1.3-9-3M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/>',
+    card:      '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>',
+    dumbbell:  '<path d="M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4M3 10l7-7M14 21l7-7"/>',
+    eye:       '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+    key:       '<circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M15 8l2.5 2.5M18 5l2 2"/>',
+    filter:    '<path d="M22 3H2l8 9.5V19l4 2v-8.5z"/>',
+    list:      '<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
+    zap:       '<path d="M13 2L3 14h9l-1 8 10-12h-9z"/>',
+    camera:    '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+    help:      '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.8.3-.9 1-.9 1.7M12 17h.01"/>',
+    store:     '<path d="M3 9l1.5-5h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8M9 21v-6h6v6"/>',
+    history:   '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 3"/>'
+  };
+
+  function icon(name, size){
+    var d = ICONS[name] || ICONS.help;
+    return '<svg class="ic" width="' + (size || 18) + '" height="' + (size || 18) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
+  }
+
+  /* ---------------- formatting ---------------- */
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function fmtDate(ms){ var d = new Date(ms); return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+  function fmtTime(ms){ var d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function fmtDateTime(ms){ return fmtDate(ms) + ' ' + fmtTime(ms); }
+  function parseDate(str){ var p = String(str).split('-'); return new Date(+p[0], +p[1]-1, +p[2]).getTime(); }
+  function todayStr(){ return fmtDate(Date.now()); }
+  function money(n){ var s = Store.get().settings; return (s.currency || 'Rs') + ' ' + Math.round(n).toLocaleString('en-PK'); }
+  function daysLeft(m){ return Math.ceil((m.renewal - Store.today()) / Store.DAY); }
+  function avatar(name){
+    var parts = String(name || '?').trim().split(/\s+/);
+    var init = (parts[0] || '?')[0].toUpperCase() + (parts.length > 1 ? parts[parts.length-1][0].toUpperCase() : '');
+    return '<span class="avatar">' + esc(init) + '</span>';
+  }
+
+  /* ---------------- status: badge + meter ---------------- */
+  var STATUS = {
+    active:   { label:'Active',        cls:'b-active' },
+    expiring: { label:'Expiring soon', cls:'b-expiring' },
+    overdue:  { label:'Overdue',       cls:'b-overdue' },
+    inactive: { label:'Inactive',      cls:'b-inactive' }
+  };
+  var STATUS_COLOR = { active:'#059669', expiring:'#d97706', overdue:'#dc2626', inactive:'#94a3b8' };
+  function badge(status, withDot){
+    var s = STATUS[status] || STATUS.inactive;
+    var dot = withDot === false ? '' : '<span class="bdot"></span>';
+    return '<span class="badge ' + s.cls + '">' + dot + s.label + '</span>';
+  }
+  function statusColor(status){ return STATUS_COLOR[status] || STATUS_COLOR.inactive; }
+
+  /* refined membership meter (replaces the old "plate loader") */
+  function meter(m){
+    var status = Store.statusOf(m);
+    var dl = daysLeft(m);
+    var planDays = Store.get().settings.planDays[m.plan] || 30;
+    var ratio = Math.max(0, Math.min(1, dl / planDays));
+    var pct = Math.round(ratio * 100);
+    var color = statusColor(status);
+    var label = status === 'overdue' ? 'Overdue ' + Math.abs(dl) + 'd'
+              : status === 'inactive' ? 'Inactive'
+              : dl + 'd left';
+    return '<div class="meter">' +
+      '<div class="meter-track"><div class="meter-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+      '<span class="meter-label" style="color:' + color + '">' + label + '</span></div>';
+  }
+
+  /* ---------------- toasts ---------------- */
+  function toast(msg, type, action){
+    var root = document.getElementById('toast-root');
+    var t = document.createElement('div');
+    t.className = 'toast ' + (type || 'info');
+    var iconName = type === 'success' ? 'check' : type === 'error' ? 'alert' : 'activity';
+    t.innerHTML = icon(iconName, 15) + '<span class="tt">' + esc(msg) + '</span>';
+    if (action && action.label){
+      var a = document.createElement('button');
+      a.className = 'toast-action';
+      a.textContent = action.label;
+      a.addEventListener('click', function(){
+        try { action.fn(); } catch(e){}
+        t.remove();
+      });
+      t.appendChild(a);
+    }
+    root.appendChild(t);
+    var dismiss = setTimeout(function(){ close(); }, action ? 6500 : 3200);
+    function close(){ t.classList.add('out'); clearTimeout(dismiss); setTimeout(function(){ t.remove(); }, 300); }
+    t.addEventListener('click', function(e){
+      if (e.target === t || e.target.classList.contains('tt')) close();
+    });
+  }
+
+  /* ---------------- modals ---------------- */
+  function modalShell(title, body, footer, opts){
+    opts = opts || {};
+    return '<div class="overlay"><div class="modal' + (opts.size ? ' modal-' + opts.size : '') + '">' +
+      '<div class="modal-head"><h3>' + title + '</h3>' +
+      '<button class="icon-btn" data-close aria-label="Close">' + icon('x', 16) + '</button></div>' +
+      '<div class="modal-body">' + body + '</div>' +
+      (footer ? '<div class="modal-foot">' + footer + '</div>' : '') +
+      '</div></div>';
+  }
+  function openOverlay(html, drawerMode){
+    var root = document.getElementById('modal-root');
+    root.innerHTML = html;
+    var overlay = root.firstElementChild;
+    overlay.addEventListener('mousedown', function(e){ if (e.target === overlay) closeOverlay(); });
+    var el = root.querySelector('.modal') || root.querySelector('.drawer');
+    return el;
+  }
+  function closeOverlay(){
+    var root = document.getElementById('modal-root');
+    if (typeof window.UI_MODAL_CLOSE === 'function'){ try { window.UI_MODAL_CLOSE(); } catch(e){} window.UI_MODAL_CLOSE = null; }
+    root.innerHTML = '';
+  }
+  document.addEventListener('click', function(e){
+    var c = e.target.closest('[data-close]');
+    if (c) closeOverlay();
+  });
+  function showModal(title, body, footer, opts){
+    openOverlay(modalShell(title, body, footer || '', opts));
+    return document.querySelector('#modal-root .modal');
+  }
+  function confirmAction(title, msg, onYes, yesLabel){
+    var body = '<div class="confirm-body"><span class="confirm-ic">' + icon('alert', 20) + '</span><p>' + msg + '</p></div>';
+    var footer = '<button class="btn btn-ghost" data-close>Cancel</button>' +
+      '<button class="btn btn-danger" id="cf-yes">' + (yesLabel || 'Confirm') + '</button>';
+    showModal(title, body, footer);
+    document.getElementById('cf-yes').addEventListener('click', function(){
+      closeOverlay();
+      if (onYes) onYes();
+    });
+  }
+
+  /* ---------------- drawer ---------------- */
+  function drawer(title, body, footer){
+    openOverlay('<div class="overlay"><div class="drawer">' +
+      '<div class="drawer-head"><h3>' + title + '</h3>' +
+      '<button class="icon-btn" data-close aria-label="Close">' + icon('x', 16) + '</button></div>' +
+      '<div class="drawer-body">' + body + '</div>' +
+      (footer ? '<div class="drawer-foot">' + footer + '</div>' : '') +
+      '</div></div>');
+    return document.querySelector('#modal-root .drawer');
+  }
+  function closeDrawer(){ closeOverlay(); }
+
+  /* ---------------- WhatsApp ---------------- */
+  function waDigits(phone){
+    var d = String(phone || '').replace(/[^\d]/g, '');
+    if (!d) return '';
+    if (d[0] === '0') d = '92' + d.slice(1);
+    if (d.length === 10) d = '92' + d;
+    return d;
+  }
+  function waLink(phone, text){
+    return 'https://wa.me/' + waDigits(phone) + '?text=' + encodeURIComponent(text);
+  }
+  function openWa(phone, text){
+    var link = waLink(phone, text);
+    window.open(link, '_blank');
+    return link;
+  }
+
+  /* ---------------- QR ---------------- */
+  function qrPayload(m){
+    return JSON.stringify({ gym: Store.get().settings.gymName, id: m.id, name: m.name });
+  }
+  function qrUrl(m){
+    return 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(qrPayload(m));
+  }
+
+  /* ---------------- misc ---------------- */
+  function download(filename, content, mime){
+    var blob = new Blob([content], { type: mime || 'application/octet-stream' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 200);
+  }
+  function copyText(text, done){
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ toast('Copied to clipboard', 'success'); if (done) done(); });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); toast('Copied to clipboard', 'success'); if (done) done(); }
+      catch(e){ toast('Copy failed', 'error'); }
+      ta.remove();
+    }
+  }
+  function randomQuote(){
+    var q = Store.get().settings.quotes || [];
+    return q.length ? q[Math.floor(Math.random() * q.length)] : 'Stay strong!';
+  }
+  function greet(){
+    var h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  return {
+    ICONS: ICONS, icon: icon,
+    esc: esc, pad: pad, fmtDate: fmtDate, fmtTime: fmtTime, fmtDateTime: fmtDateTime,
+    parseDate: parseDate, todayStr: todayStr, money: money, daysLeft: daysLeft, avatar: avatar,
+    badge: badge, statusColor: statusColor, meter: meter,
+    toast: toast, openOverlay: openOverlay, closeOverlay: closeOverlay, closeDrawer: closeDrawer,
+    showModal: showModal, confirmAction: confirmAction, drawer: drawer,
+    waDigits: waDigits, waLink: waLink, openWa: openWa,
+    qrPayload: qrPayload, qrUrl: qrUrl, download: download,
+    copyText: copyText, randomQuote: randomQuote, greet: greet
+  };
+})();
+
+;
+/* === js/views-core.js === */
+/* ============================================================
+   GymFlow — Views: Dashboard + Attendance / Check-in
+   ============================================================ */
+window.Views = window.Views || {};
+
+function statCard(iconKey, tone, value, label, trend, view){
+  var click = view ? ' data-action="go" data-view="' + view + '"' : '';
+  return '<div class="stat-card"' + click + '>' +
+    '<span class="stat-icon ' + tone + '">' + UI.icon(iconKey, 15) + '</span>' +
+    '<div class="stat-value">' + value + '</div>' +
+    '<div class="stat-label">' + label + '</div>' +
+    (trend ? '<div class="stat-trend">' + trend + '</div>' : '') +
+    '</div>';
+}
+function baseOpts(prefix, yLabel){
+  return {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color:'#98a2b3', boxWidth:10, boxHeight:10, usePointStyle:true } } },
+    scales: {
+      x: { ticks: { color:'#98a2b3', font:{size:11} }, grid: { color:'rgba(128,140,160,.10)' } },
+      y: { beginAtZero: true, ticks: { color:'#98a2b3', font:{size:11}, callback: function(v){ return prefix ? prefix + ' ' + v : v; } }, grid: { color:'rgba(128,140,160,.10)' } }
+    }
+  };
+}
+
+/* ================= DASHBOARD ================= */
+Views.dashboard = function(){
+  var s = Store.get(), u = Auth.current();
+  var members = s.members.filter(function(m){ return m.active; });
+  var act  = members.filter(function(m){ return Store.statusOf(m) === 'active'; }).length;
+  var exp  = members.filter(function(m){ return Store.statusOf(m) === 'expiring'; }).length;
+  var ovd  = members.filter(function(m){ return Store.statusOf(m) === 'overdue'; }).length;
+  var todayAtt = Store.checkinsOn(Store.today());
+  var mr = Store.monthRange(Date.now());
+  var rev = Store.revenueBetween(mr.start, mr.end);
+  var expAmt = Store.expensesBetween(mr.start, mr.end);
+  var net = rev - expAmt;
+  var dueDues = Store.overdueDues();
+
+  var upcoming = Store.renewalsUpcoming(7);
+  var overdueList = members.filter(function(m){ return Store.statusOf(m) === 'overdue'; })
+    .sort(function(a,b){ return a.renewal - b.renewal; });
+  var feed = Store.activity().slice(0, 7);
+  var lowStock = s.products.filter(function(p){ return p.stock < p.threshold; });
+  var allAtt = s.attendance.slice().sort(function(a,b){ return b.ts - a.ts; }).slice(0,5);
+
+  var html =
+  '<div class="page-head">' +
+    '<div><h1>' + UI.greet() + ', ' + UI.esc(u.name.split(' ')[0]) + '</h1>' +
+    '<p class="page-sub">Overview for <b>' + UI.esc(s.settings.gymName) + '</b> — ' + new Date().toLocaleDateString('en-PK', { weekday:'long', day:'numeric', month:'long' }) + '</p></div>' +
+    '<div class="page-actions">' +
+      '<button class="btn" data-action="go" data-view="checkin">' + UI.icon('qr', 15) + ' Check-in</button>' +
+      '<button class="btn" data-action="go-add">' + UI.icon('plus', 15) + ' Add Member</button>' +
+      '<button class="btn btn-primary" data-action="go" data-view="pos">' + UI.icon('cart', 15) + ' New Sale</button>' +
+    '</div>' +
+  '</div>' +
+
+  '<div class="stat-grid">' +
+    statCard('users', 'green', act, 'Active members', members.length + ' total', 'members') +
+    statCard('clock', 'amber', exp, 'Expiring ≤ ' + s.settings.reminderDays + 'd', upcoming.length + ' renewals this week', 'members') +
+    statCard('alert', 'red', ovd, 'Overdue', UI.money(dueDues) + ' outstanding', 'members') +
+    statCard('qr', 'blue', todayAtt.length, 'Check-ins today', allAtt.length ? 'latest ' + UI.fmtTime(allAtt[0].ts) : '', 'checkin') +
+    statCard('banknote', 'green', UI.money(rev), 'Revenue (this month)', 'incl. ' + UI.money(dueDues) + ' dues to collect', 'finance') +
+    statCard('up', net >= 0 ? 'blue' : 'red', UI.money(net), 'Net (this month)', 'after ' + UI.money(expAmt) + ' expenses', 'finance') +
+  '</div>' +
+
+  '<div class="grid-2">' +
+    '<div class="card"><div class="card-head"><h3>Check-ins by hour — today</h3></div>' +
+      '<div class="chart-box"><canvas id="ch-hour"></canvas></div></div>' +
+    '<div class="card"><div class="card-head"><h3>Monthly revenue vs expenses</h3></div>' +
+      '<div class="chart-box"><canvas id="ch-month"></canvas></div></div>' +
+  '</div>' +
+
+  '<div class="grid-2">' +
+    '<div class="card"><div class="card-head"><h3>Upcoming renewals</h3>' +
+      '<button class="btn btn-ghost btn-sm" data-action="go" data-view="members">View all</button></div>' +
+      '<div class="list">' + (upcoming.map(function(m){
+        return '<div class="list-row"><div class="list-main">' + UI.avatar(m.name) +
+          '<div><b>' + UI.esc(m.name) + '</b><span class="muted small">' + UI.esc(m.plan) + ' · renews ' + UI.fmtDate(m.renewal) + '</span></div></div>' +
+          UI.badge(Store.statusOf(m)) +
+          '<button class="btn btn-sm btn-primary" data-action="paid" data-id="' + m.id + '">Mark Paid</button></div>';
+      }).join('') || '<p class="muted small">No renewals in the next ' + s.settings.reminderDays + ' days.</p>') + '</div></div>' +
+
+    '<div class="card"><div class="card-head"><h3>Overdue dues</h3>' +
+      '<span class="count-pill">' + UI.money(dueDues) + '</span></div>' +
+      '<div class="list">' + (overdueList.map(function(m){
+        return '<div class="list-row"><div class="list-main">' + UI.avatar(m.name) +
+          '<div><b>' + UI.esc(m.name) + '</b><span class="muted small">' + UI.esc(m.plan) + ' · overdue ' + Math.abs(UI.daysLeft(m)) + 'd</span></div></div>' +
+          '<button class="btn btn-sm btn-primary" data-action="paid" data-id="' + m.id + '">Mark Paid</button></div>';
+      }).join('') || '<p class="muted small">Nothing overdue. Nice.</p>') + '</div></div>' +
+  '</div>' +
+
+  '<div class="grid-2">' +
+    '<div class="card"><div class="card-head"><h3>Low stock alerts</h3>' +
+      '<button class="btn btn-ghost btn-sm" data-action="go" data-view="pos">Store</button></div>' +
+      '<div class="list">' + (lowStock.map(function(p){
+        var bad = p.stock <= 0;
+        return '<div class="list-row"><div class="list-main"><span class="p-emoji" style="width:34px;height:34px;font-size:15px">' + UI.icon(bad ? 'x' : 'alert', 15) + '</span>' +
+          '<div><b>' + UI.esc(p.name) + '</b><span class="muted small">' + UI.money(p.price) + '</span></div></div>' +
+          (bad ? '<span class="stock-badge st-out">Out of stock</span>' : '<span class="stock-badge st-low">' + p.stock + ' left</span>') + '</div>';
+      }).join('') || '<p class="muted small">All products stocked.</p>') + '</div></div>' +
+
+    '<div class="card"><div class="card-head"><h3>Recent activity</h3></div>' +
+      '<div>' + feed.map(function(a){
+        var ic = a.text.indexOf('Renewal') > -1 ? 'check' : a.text.indexOf('POS') > -1 ? 'cart' : a.text.indexOf('rent') > -1 ? 'banknote' : 'activity';
+        var tone = ic === 'check' ? 'green' : ic === 'banknote' ? 'amber' : '';
+        return '<div class="activity-row"><span class="activity-ic ' + tone + '">' + UI.icon(ic, 14) + '</span>' +
+          '<div style="flex:1"><div style="font-size:13px">' + UI.esc(a.text) + '</div>' +
+          '<div class="muted small">' + UI.esc(a.actor) + ' · ' + (new Date(a.ts).toDateString() === new Date().toDateString() ? 'today ' + UI.fmtTime(a.ts) : UI.fmtDateTime(a.ts)) + '</div></div></div>';
+      }).join('') + '</div></div>' +
+  '</div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  document.getElementById('view').onclick = function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var act = t.getAttribute('data-action');
+    if (act === 'go') App.nav(t.getAttribute('data-view'));
+    else if (act === 'go-add') App.nav('members', { open:'add' });
+    else if (act === 'paid'){
+      var m = Store.member(t.getAttribute('data-id'));
+      if (m) markPaidFlow(m);
+    }
+  };
+
+  /* charts */
+  var hourLabels = [], hourData = [];
+  for (var h = 6; h <= 22; h++){
+    hourLabels.push((h % 24) + ':00');
+    hourData.push(todayAtt.filter(function(a){ return new Date(a.ts).getHours() === h; }).length);
+  }
+  var series = [];
+  var dd = new Date();
+  for (var i = 5; i >= 0; i--){
+    var d0 = new Date(dd.getFullYear(), dd.getMonth() - i, 1);
+    var r = Store.monthRange(d0.getTime());
+    series.push({ label: d0.toLocaleDateString('en', { month:'short' }),
+      income: Store.revenueBetween(r.start, r.end), expense: Store.expensesBetween(r.start, r.end) });
+  }
+  if (window.Chart){
+    App.chart('ch-hour', { type:'bar', data:{
+        labels: hourLabels,
+        datasets:[{ label:'Check-ins', data: hourData, backgroundColor:'rgba(5,150,105,.75)',
+          borderRadius:5, barPercentage:.55 }] },
+      options: baseOpts('', 'Count') });
+    App.chart('ch-month', { type:'line', data:{
+        labels: series.map(function(x){ return x.label; }),
+        datasets:[
+          { label:'Income',  data: series.map(function(x){ return x.income; }),  borderColor:'#059669', backgroundColor:'rgba(5,150,105,.10)', fill:true, tension:.35, pointRadius:3, borderWidth:2 },
+          { label:'Expenses',data: series.map(function(x){ return x.expense; }), borderColor:'#dc2626', backgroundColor:'rgba(220,38,38,.08)', fill:true, tension:.35, pointRadius:3, borderWidth:2 }
+        ] },
+      options: baseOpts('Rs', '') });
+  } else {
+    Array.prototype.forEach.call(document.querySelectorAll('.chart-box'), function(b){
+      b.innerHTML = '<p>Charts need internet to load Chart.js.</p>';
+    });
+  }
+};
+
+/* ================= ATTENDANCE / CHECK-IN ================= */
+Views.checkin = function(){
+  var u = Auth.current();
+  var isTrainer = u.role === 'trainer';
+  var canRemove = u.role !== 'trainer';
+  var s = Store.get();
+
+  function visibleMembers(){
+    var ms = s.members.filter(function(m){ return m.active !== false; });
+    if (isTrainer) ms = ms.filter(function(m){ return m.trainerId === u.id; });
+    return ms;
+  }
+  var todayLog = Store.checkinsOn(Store.today()).slice().sort(function(a,b){ return b.ts - a.ts; });
+
+  var html =
+  '<div class="page-head"><div><h1>Attendance</h1>' +
+    '<p class="page-sub">Search a member to check in, or scan their QR pass at the front desk.</p></div>' +
+    '<div class="page-actions"><button class="btn btn-primary" id="btn-scan">' + UI.icon('camera', 15) + ' Scan QR</button></div></div>' +
+
+  '<div class="grid-checkin">' +
+    '<div class="card"><div class="card-head"><h3>Check-in</h3><span class="count-pill">' + todayLog.length + ' today</span></div>' +
+      '<input id="ci-search" class="search-input" placeholder="Search name or phone…" autocomplete="off" />' +
+      '<div id="ci-results" class="list mt"></div></div>' +
+    '<div class="card"><div class="card-head"><h3>Today’s log</h3></div>' +
+      '<div id="ci-today" class="list"></div></div>' +
+  '</div>' +
+
+  '<div class="card mt"><div class="card-head"><h3>Attendance history</h3>' +
+      '<input type="date" id="ci-date" class="input" style="width:auto;padding:7px 10px" value="' + UI.todayStr() + '" /></div>' +
+    '<div id="ci-history" class="list"></div></div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  function resultRow(m){
+    var already = todayLog.some(function(a){ return a.memberId === m.id; });
+    return '<div class="list-row"><div class="list-main">' + UI.avatar(m.name) +
+      '<div><b>' + UI.esc(m.name) + '</b><span class="muted small">' + UI.esc(m.plan) + ' · ' + UI.esc(m.phone || 'no phone') +
+      (already ? ' · <b style="color:var(--accent-strong)">in today</b>' : '') + '</span></div></div>' +
+      UI.badge(Store.statusOf(m)) +
+      '<button class="btn btn-primary btn-sm" data-action="checkin" data-id="' + m.id + '">' + UI.icon('check', 13) + ' Check in</button></div>';
+  }
+  function renderResults(q){
+    var ms = visibleMembers().filter(function(m){
+      return !q || (m.name || '').toLowerCase().indexOf(q.toLowerCase()) > -1 ||
+        (m.phone || '').replace(/\s/g,'').indexOf(q.replace(/\s/g,'')) > -1;
+    }).slice(0, 8);
+    document.getElementById('ci-results').innerHTML = ms.map(resultRow).join('') ||
+      '<div class="empty-state" style="padding:26px"><span class="es-ic" style="width:40px;height:40px;margin-bottom:8px">' + UI.icon('search', 16) + '</span>No matching members' + (isTrainer ? ' in your client list' : '') + '.</div>';
+  }
+  renderResults('');
+
+  var sb = document.getElementById('ci-search');
+  sb.addEventListener('input', function(){ renderResults(sb.value); });
+
+  function logRow(a, forHistory){
+    var m = Store.member(a.memberId);
+    if (!m) return '';
+    var t = Store.get().users.find(function(x){ return x.id === m.trainerId; });
+    return '<div class="list-row"><div class="list-main">' + UI.avatar(m.name) +
+      '<div><b>' + UI.esc(m.name) + '</b><span class="muted small">' +
+      (forHistory ? UI.fmtDateTime(a.ts) : UI.fmtTime(a.ts)) + ' · trainer: ' + UI.esc(t ? t.name : '—') +
+      '</span></div></div>' + UI.badge(Store.statusOf(m)) +
+      (canRemove ? '<button class="icon-btn danger" data-action="del-att" data-id="' + a.id + '" title="Remove entry">' + UI.icon('trash', 14) + '</button>' : '') + '</div>';
+  }
+  function renderToday(){
+    document.getElementById('ci-today').innerHTML =
+      (Store.checkinsOn(Store.today()).slice().sort(function(a,b){ return b.ts - a.ts; }).map(function(a){ return logRow(a, false); }).join('') ||
+      '<p class="muted small">No check-ins yet today.</p>');
+  }
+  renderToday();
+
+  function renderHistory(){
+    var ts = UI.parseDate(document.getElementById('ci-date').value || UI.todayStr());
+    var list = s.attendance.filter(function(a){ return a.ts >= Store.startOfDay(ts) && a.ts < Store.startOfDay(ts) + Store.DAY; })
+      .sort(function(a,b){ return b.ts - a.ts; }).slice(0, 60);
+    document.getElementById('ci-history').innerHTML = list.map(function(a){ return logRow(a, true); }).join('') ||
+      '<p class="muted small">No records for this date.</p>';
+  }
+  renderHistory();
+  document.getElementById('ci-date').addEventListener('change', renderHistory);
+
+  document.getElementById('btn-scan').addEventListener('click', startScanner);
+
+  document.getElementById('view').onclick = function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var act = t.getAttribute('data-action');
+    if (act === 'checkin'){ doCheckin(t.getAttribute('data-id')); }
+    else if (act === 'del-att'){
+      UI.confirmAction('Remove record', 'Delete this attendance entry?', function(){
+        Store.deleteAttendance(t.getAttribute('data-id'));
+        UI.toast('Entry removed', 'success');
+        Views.checkin();
+      }, 'Remove');
+    }
+  };
+};
+
+function doCheckin(id){
+  var m = Store.member(id);
+  if (!m) return;
+  Store.checkIn(id);
+  UI.toast('Checked in: ' + m.name, 'success');
+  Views.checkin();
+}
+
+/* -------- QR camera scanner -------- */
+function startScanner(){
+  var modal = UI.showModal('Scan member QR pass',
+    '<div id="qr-reader"></div><p class="muted small mt">Point the camera at the member’s QR pass on their phone. ' +
+    'The camera needs <b>localhost</b> or <b>HTTPS</b> — allow access when prompted.</p>',
+    '<button class="btn" data-close>Close</button>');
+  if (!window.Html5Qrcode){
+    UI.toast('Scanner library not loaded (internet needed)', 'error');
+    return;
+  }
+  var scanner = new Html5Qrcode('qr-reader');
+  var done = false;
+  window.UI_MODAL_CLOSE = function(){
+    if (scanner && !done){ try { scanner.stop().catch(function(){}); } catch(e){} }
+  };
+  function finish(m){
+    if (done) return;
+    done = true;
+    if (scanner){ try { scanner.stop().catch(function(){}); } catch(e){} }
+    UI.closeOverlay();
+    Store.checkIn(m.id);
+    UI.toast('Checked in: ' + m.name, 'success');
+    Views.checkin();
+  }
+  scanner.start({ facingMode:'environment' }, { fps:10, qrbox:{ width:230, height:230 } },
+    function(text){
+      var d = null;
+      try { d = JSON.parse(text); } catch(e){}
+      var m = d && d.id ? Store.member(d.id) : null;
+      if (m) finish(m);
+      else UI.toast('QR not recognised', 'error');
+    },
+    function(){}
+  ).catch(function(err){
+    UI.toast('Camera unavailable: ' + err, 'error');
+  });
+}
+
+;
+/* === js/views-members.js === */
+/* ============================================================
+   GymFlow — Views: Members directory, member drawer, WhatsApp,
+   QR passes, Plans builder
+   ============================================================ */
+window.Views = window.Views || {};
+
+var MS = { q:'', status:'', plan:'', trainer:'', sel:{} };
+var SPLITS = {
+  'push-pull-legs': { label:'Push / Pull / Legs', days:['Push Day','Pull Day','Leg Day','Rest','Push Day','Pull Day','Leg Day'] },
+  'upper-lower':    { label:'Upper / Lower',      days:['Upper Body','Lower Body','Rest','Upper Body','Lower Body','Rest','Rest'] },
+  'bro':            { label:'Bro Split',          days:['Chest','Back','Shoulders','Arms','Legs','Rest','Rest'] },
+  'full':           { label:'Full Body',          days:['Full Body A','Full Body B','Rest','Full Body A','Full Body B','Rest','Rest'] },
+  'custom':         { label:'Custom',             days:['Day 1','Day 2','Day 3','Day 4','Day 5','Day 6','Day 7'] }
+};
+var MEALS = [
+  { k:'breakfast', label:'Breakfast' }, { k:'lunch', label:'Lunch' },
+  { k:'pre', label:'Pre-Workout' }, { k:'dinner', label:'Dinner' },
+  { k:'extra', label:'Supplements & Notes' }
+];
+
+function planOptions(sel){
+  return ['monthly','quarterly','annual'].map(function(p){
+    return '<option value="' + p + '"' + (sel === p ? ' selected' : '') + '>' + p[0].toUpperCase() + p.slice(1) + '</option>';
+  }).join('');
+}
+function trainerOptions(sel){
+  return Auth.trainers().map(function(t){
+    return '<option value="' + t.id + '"' + (sel === t.id ? ' selected' : '') + '>' + UI.esc(t.name) + '</option>';
+  }).join('');
+}
+function splitOptions(sel){
+  var out = '';
+  for (var k in SPLITS) out += '<option value="' + k + '"' + (sel === k ? ' selected' : '') + '>' + SPLITS[k].label + '</option>';
+  return out;
+}
+
+/* ================= MEMBERS DIRECTORY ================= */
+Views.members = function(ctx){
+  var u = Auth.current();
+  var isManager = u.role === 'manager';
+  var isTrainer = u.role === 'trainer';
+  var s = Store.get();
+
+  if (ctx && ctx.q != null) MS.q = String(ctx.q);
+
+  var all = s.members.slice().sort(function(a,b){ return a.name.localeCompare(b.name); });
+  var list = all.filter(function(m){
+    if (MS.q && (m.name || '').toLowerCase().indexOf(MS.q.toLowerCase()) === -1 &&
+        (m.phone || '').replace(/\s/g,'').indexOf(MS.q.replace(/\s/g,'')) === -1) return false;
+    if (MS.status && Store.statusOf(m) !== MS.status) return false;
+    if (MS.plan && m.plan !== MS.plan) return false;
+    if (MS.trainer && m.trainerId !== MS.trainer) return false;
+    if (isTrainer && m.trainerId !== u.id) return false;
+    return true;
+  });
+
+  var html =
+  '<div class="page-head"><div><h1>' + (isTrainer ? 'Clients' : 'Members') + ' <span class="count-pill">' + list.length + '</span></h1>' +
+    '<p class="page-sub">' + (isTrainer ? 'Your assigned clients — view, message and build plans.' : 'Search, filter, renew and message members. Click a row for full details.') + '</p></div>' +
+    '<div class="page-actions">' +
+      '<button class="btn" data-action="wa-batch" data-kind="reminder">' + UI.icon('message', 15) + ' Reminders</button>' +
+      '<button class="btn" data-action="wa-batch" data-kind="quote">' + UI.icon('zap', 15) + ' Quotes</button>' +
+      (isTrainer ? '' : '<button class="btn btn-primary" data-action="add">' + UI.icon('plus', 15) + ' Add Member</button>') +
+    '</div></div>' +
+
+  '<div class="card">' +
+    '<div class="toolbar">' +
+      '<input id="m-search" class="search-input" placeholder="Search name or phone…" value="' + UI.esc(MS.q) + '" />' +
+      '<select id="f-status" class="select"><option value="">All statuses</option>' +
+        '<option value="active"'   + (MS.status==='active'   ? ' selected':'') + '>Active</option>' +
+        '<option value="expiring"' + (MS.status==='expiring' ? ' selected':'') + '>Expiring soon</option>' +
+        '<option value="overdue"'  + (MS.status==='overdue'  ? ' selected':'') + '>Overdue</option>' +
+        '<option value="inactive"' + (MS.status==='inactive' ? ' selected':'') + '>Inactive</option></select>' +
+      '<select id="f-plan" class="select"><option value="">All plans</option>' + planOptions(MS.plan || '') + '</select>' +
+      (isTrainer ? '' : '<select id="f-trainer" class="select"><option value="">All trainers</option>' + trainerOptions(MS.trainer || '') + '</select>') +
+    '</div>' +
+    '<div class="table-wrap"><table class="table"><thead><tr>' +
+      '<th style="width:32px"><input type="checkbox" id="sel-all" /></th>' +
+      '<th>Member</th><th>Plan</th><th>Trainer</th><th class="th-numeric">Renewal</th><th>Status</th><th style="width:150px"></th>' +
+    '</tr></thead><tbody>' +
+    (list.map(function(m){
+      var t = s.users.find(function(x){ return x.id === m.trainerId; });
+      var dl = UI.daysLeft(m);
+      return '<tr class="clickable-row" data-open="' + m.id + '">' +
+        '<td><input type="checkbox" class="row-sel" data-id="' + m.id + '"' + (MS.sel[m.id] ? ' checked' : '') + ' /></td>' +
+        '<td><div class="cell-user">' + UI.avatar(m.name) + '<div><b>' + UI.esc(m.name) + '</b>' +
+          '<span class="muted small">' + UI.esc(m.phone || '') + (m.active === false ? ' · archived' : '') + '</span></div></div></td>' +
+        '<td><span class="plan-chip">' + m.plan[0].toUpperCase() + m.plan.slice(1) + '</span></td>' +
+        '<td>' + (t ? UI.esc(t.name) : '<span class="muted">—</span>') + '</td>' +
+        '<td class="numeric"><b>' + UI.fmtDate(m.renewal) + '</b>' +
+          '<div class="muted small">' + (dl < 0 ? 'overdue ' + (-dl) + 'd' : dl + 'd left') + '</div></td>' +
+        '<td class="td-status">' + UI.badge(Store.statusOf(m)) + UI.meter(m) + '</td>' +
+        '<td><div class="row-actions">' +
+          (isManager ? '<button class="icon-btn" data-action="paid" data-id="' + m.id + '" title="Mark paid">' + UI.icon('card', 14) + '</button>' : '') +
+          '<button class="icon-btn" data-action="wa" data-id="' + m.id + '" title="WhatsApp">' + UI.icon('message', 14) + '</button>' +
+          '<button class="icon-btn" data-action="qr" data-id="' + m.id + '" title="QR pass">' + UI.icon('qr', 14) + '</button>' +
+          '<button class="icon-btn" data-action="plan" data-id="' + m.id + '" title="Plans">' + UI.icon('clipboard', 14) + '</button>' +
+          (!isTrainer ? '<button class="icon-btn" data-action="edit" data-id="' + m.id + '" title="Edit">' + UI.icon('pencil', 14) + '</button>' : '') +
+          (isManager ? '<button class="icon-btn danger" data-action="del" data-id="' + m.id + '" title="Delete">' + UI.icon('trash', 14) + '</button>' : '') +
+        '</div></td></tr>';
+    }).join('') || '<tr><td colspan="7" class="empty-td">No members match your filters.</td></tr>') +
+    '</tbody></table></div></div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  if (ctx && ctx.open === 'add') memberForm(null);
+
+  /* ---- filtering ---- */
+  function refresh(ctx2){ Views.members(ctx2 || {}); }
+  var inSearch = document.getElementById('m-search');
+  inSearch.addEventListener('input', function(){ MS.q = inSearch.value; refresh({ q: inSearch.value }); });
+  document.getElementById('f-status').addEventListener('change', function(){ MS.status = this.value; refresh(); });
+  document.getElementById('f-plan').addEventListener('change', function(){ MS.plan = this.value; refresh(); });
+  var ft = document.getElementById('f-trainer');
+  if (ft) ft.addEventListener('change', function(){ MS.trainer = this.value; refresh(); });
+
+  /* ---- selection ---- */
+  document.getElementById('sel-all').addEventListener('change', function(){
+    var c = this.checked;
+    Array.prototype.forEach.call(document.querySelectorAll('.row-sel'), function(b){ b.checked = c; });
+    MS.sel = {};
+    if (c) Array.prototype.forEach.call(document.querySelectorAll('.row-sel'), function(b){ MS.sel[b.getAttribute('data-id')] = true; });
+  });
+  document.getElementById('view').onchange = function(e){
+    if (e.target.classList.contains('row-sel')){
+      if (e.target.checked) MS.sel[e.target.getAttribute('data-id')] = true;
+      else delete MS.sel[e.target.getAttribute('data-id')];
+    }
+  };
+
+  /* ---- actions ---- */
+  function selectedIds(){
+    var ids = [];
+    for (var k in MS.sel) if (MS.sel[k]) ids.push(k);
+    return ids;
+  }
+  function currentList(){ return list; }
+
+  document.getElementById('view').onclick = function(e){
+    if (e.target.closest('input')) return; // don't open drawer for checkbox clicks
+    var t = e.target.closest('[data-action]');
+    if (t){
+      var act = t.getAttribute('data-action'), id = t.getAttribute('data-id');
+      var mm = id ? Store.member(id) : null;
+      if (act === 'add') memberForm(null);
+      else if (act === 'edit' && mm) memberForm(mm);
+      else if (act === 'wa' && mm) waModal(mm);
+      else if (act === 'qr' && mm) qrModal(mm);
+      else if (act === 'paid' && mm) markPaidFlow(mm);
+      else if (act === 'del' && mm){
+        UI.confirmAction('Delete member', 'Delete <b>' + UI.esc(mm.name) + '</b> and their attendance & plans?', function(){
+          var gone = Store.deleteMember(mm.id);
+          if (gone){
+            var actor = Auth.current();
+            Store.log(actor ? actor.name : 'System', 'Deleted member — ' + gone.name);
+            UI.toast('Member deleted', 'success', {
+              label:'Undo',
+              fn:function(){
+                Store.addMember(gone, { keepId:true });
+                UI.toast('Member restored', 'success');
+                refresh();
+              }
+            });
+          }
+          refresh();
+        }, 'Delete');
+      }
+      else if (act === 'plan' && mm) App.nav('plans', { member: mm.id });
+      else if (act === 'wa-batch') batchWa(t.getAttribute('data-kind'));
+      else if (act === 'go') App.nav(t.getAttribute('data-view'));
+      return;
+    }
+    var row = e.target.closest('[data-open]');
+    if (row){
+      var m = Store.member(row.getAttribute('data-open'));
+      if (m) Views.openMember(m);
+    }
+  };
+
+  function batchWa(kind){
+    var ids = selectedIds();
+    var ms = ids.length ? currentList().filter(function(m){ return ids.indexOf(m.id) > -1; }) : currentList();
+    if (!ms.length){ UI.toast('No members selected/found', 'error'); return; }
+    ms.forEach(function(m, i){
+      setTimeout(function(){
+        var text = kind === 'reminder' ? reminderText(m) : quoteText(m);
+        UI.openWa(m.phone, text);
+      }, i * 450);
+    });
+    UI.toast('Opening WhatsApp for ' + ms.length + ' member' + (ms.length > 1 ? 's' : '') + ' — allow pop-ups if blocked', 'info');
+  }
+};
+
+/* ================= MEMBER DRAWER ================= */
+Views.openMember = function(m){
+  var s = Store.get();
+  var u = Auth.current();
+  var isManager = u.role === 'manager';
+  var isTrainer = u.role === 'trainer';
+  var trainer = s.users.find(function(x){ return x.id === m.trainerId; });
+  var pays = Store.memberPayments(m.id).slice(0, 6);
+  var thisMonth = Store.checkinsOn(Store.today()).concat([]);
+  var memberAtt = s.attendance.filter(function(a){ return a.memberId === m.id; });
+  var attMonth = memberAtt.filter(function(a){
+    var mr = Store.monthRange(Date.now());
+    return a.ts >= mr.start && a.ts < mr.end;
+  }).length;
+  var plans = s.plans.filter(function(p){ return p.memberId === m.id; }).sort(function(a,b){ return b.ts - a.ts; }).slice(0, 3);
+  var locker = s.lockers.find(function(l){ return l.memberId === m.id; });
+
+  var body =
+  '<div class="profile-head">' + UI.avatar(m.name) +
+    '<div><div class="profile-name">' + UI.esc(m.name) + '</div>' +
+    '<div class="profile-sub">' + UI.badge(Store.statusOf(m)) + ' · ' + m.plan[0].toUpperCase() + m.plan.slice(1) + ' · ' + UI.esc(m.phone || 'no phone') + '</div></div>' +
+  '</div>' +
+
+  '<div class="details-grid">' +
+    '<div class="detail-item"><div class="k">Renewal date</div><div class="v">' + UI.fmtDate(m.renewal) + '</div></div>' +
+    '<div class="detail-item"><div class="k">Days remaining</div><div class="v">' + (UI.daysLeft(m) < 0 ? 'Overdue ' + (-UI.daysLeft(m)) + 'd' : UI.daysLeft(m) + ' days') + '</div></div>' +
+    '<div class="detail-item"><div class="k">Plan</div><div class="v">' + m.plan[0].toUpperCase() + m.plan.slice(1) + ' · ' + UI.money(s.settings.planFee[m.plan]) + '</div></div>' +
+    '<div class="detail-item"><div class="k">Trainer</div><div class="v">' + (trainer ? UI.esc(trainer.name) : 'Unassigned') + '</div></div>' +
+    '<div class="detail-item"><div class="k">Joined</div><div class="v">' + UI.fmtDate(m.joinedAt || m.start) + '</div></div>' +
+    '<div class="detail-item"><div class="k">Locker</div><div class="v">' + (locker ? '#' + locker.num : 'None') + '</div></div>' +
+  '</div>' +
+  '<div class="mt">' + UI.meter(m) + '</div>' +
+
+  '<div class="mini-head"><h4>Payment history</h4><span class="muted small">' + Store.memberPayments(m.id).length + ' total</span></div>' +
+  '<div class="list">' + (pays.map(function(t){
+    return '<div class="list-row" style="padding:8px 12px"><div class="list-main"><span class="activity-ic green">' + UI.icon('check', 13) + '</span>' +
+      '<div><b>' + UI.money(t.amount) + '</b><span class="muted small">' + UI.fmtDate(t.ts) + ' · ' + UI.esc(t.desc || 'Renewal') + '</span></div></div></div>';
+  }).join('') || '<p class="muted small">No payments recorded yet.</p>') + '</div>' +
+
+  '<div class="mini-head"><h4>Attendance</h4><span class="muted small">' + attMonth + ' visits this month</span></div>' +
+  '<div class="list">' + (memberAtt.slice().sort(function(a,b){ return b.ts - a.ts; }).slice(0, 3).map(function(a){
+    return '<div class="list-row" style="padding:8px 12px"><div class="list-main"><span class="activity-ic">' + UI.icon('qr', 13) + '</span>' +
+      '<div><b>' + UI.fmtDate(a.ts) + '</b><span class="muted small">' + UI.fmtTime(a.ts) + '</span></div></div></div>';
+  }).join('') || '<p class="muted small">No visits recorded.</p>') + '</div>' +
+
+  (plans.length ? '<div class="mini-head"><h4>Recent plans</h4></div>' +
+    '<div class="list">' + plans.map(function(p){
+      return '<div class="list-row" style="padding:8px 12px"><div class="list-main"><span class="activity-ic">' + UI.icon(p.kind === 'workout' ? 'dumbbell' : 'clipboard', 13) + '</span>' +
+        '<div><b>' + UI.esc(p.title) + '</b><span class="muted small">' + UI.fmtDate(p.ts) + '</span></div></div>' +
+        '<button class="btn btn-sm" data-action="pview" data-id="' + p.id + '">View</button></div>';
+    }).join('') + '</div>' : '') +
+
+  (m.notes ? '<div class="mini-head"><h4>Notes</h4></div><p class="muted small" style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px">' + UI.esc(m.notes) + '</p>' : '');
+
+  var footer =
+    (isManager ? '<button class="btn btn-primary" data-action="paid" data-id="' + m.id + '">' + UI.icon('card', 15) + ' Mark Paid</button>' : '') +
+    '<button class="btn" data-action="wa" data-id="' + m.id + '">' + UI.icon('message', 15) + ' WhatsApp</button>' +
+    '<button class="btn" data-action="qr" data-id="' + m.id + '">' + UI.icon('qr', 15) + ' QR Pass</button>' +
+    '<button class="btn" data-action="plan" data-id="' + m.id + '">' + UI.icon('clipboard', 15) + ' Plans</button>' +
+    (!isTrainer ? '<button class="btn" data-action="edit" data-id="' + m.id + '">' + UI.icon('pencil', 15) + ' Edit</button>' : '') +
+    (isManager ? '<button class="btn btn-danger" data-action="del" data-id="' + m.id + '">' + UI.icon('trash', 15) + '</button>' : '');
+
+  var drawer = UI.drawer(UI.esc(m.name), body, footer);
+  drawer.onclick = function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var act = t.getAttribute('data-action'), id = t.getAttribute('data-id');
+    var mm = Store.member(id || m.id);
+    if (act === 'paid' && mm){ UI.closeDrawer(); markPaidFlow(mm); }
+    else if (act === 'wa' && mm){ UI.closeDrawer(); waModal(mm); }
+    else if (act === 'qr' && mm){ UI.closeDrawer(); qrModal(mm); }
+    else if (act === 'plan' && mm){ UI.closeDrawer(); App.nav('plans', { member: mm.id }); }
+    else if (act === 'edit' && mm){ UI.closeDrawer(); memberForm(mm); }
+    else if (act === 'del' && mm){
+      UI.confirmAction('Delete member', 'Delete <b>' + UI.esc(mm.name) + '</b>?', function(){
+        Store.deleteMember(mm.id);
+        UI.toast('Member deleted', 'success');
+        Views.members({});
+      }, 'Delete');
+    }
+    else if (act === 'pview'){
+      var p = Store.get().plans.find(function(x){ return x.id === id; });
+      if (p) planView(p, mm);
+    }
+  };
+};
+
+/* ---------------- member form ---------------- */
+function memberForm(m){
+  var s = Store.get();
+  var isEdit = !!m;
+  var body =
+    '<div class="form-grid-2">' +
+      '<div class="field"><label>Full name *</label><input id="mf-name" class="input" value="' + (m ? UI.esc(m.name) : '') + '" placeholder="e.g. Ahmed Khan" /></div>' +
+      '<div class="field"><label>Phone (WhatsApp)</label><input id="mf-phone" class="input" value="' + (m ? UI.esc(m.phone) : '') + '" placeholder="03xx xxxxxxx" /></div>' +
+      '<div class="field"><label>Plan type</label><select id="mf-plan" class="input">' + planOptions(m ? m.plan : 'monthly') + '</select></div>' +
+      '<div class="field"><label>Assign trainer</label><select id="mf-trainer" class="input"><option value="">— None —</option>' + trainerOptions(m ? m.trainerId : '') + '</select></div>' +
+      '<div class="field"><label>Start date</label><input type="date" id="mf-start" class="input" value="' + UI.fmtDate(m ? m.start : Date.now()) + '" /></div>' +
+      '<div class="field"><label>Renewal date</label><input type="date" id="mf-renewal" class="input" value="' + UI.fmtDate(m ? m.renewal : (Date.now() + 30 * Store.DAY)) + '" /></div>' +
+    '</div>' +
+    '<div class="field"><label>Notes</label><textarea id="mf-notes" class="input" rows="2">' + (m ? UI.esc(m.notes || '') : '') + '</textarea></div>' +
+    '<p class="muted small">Membership fee: <b id="mf-fee"></b> — “Mark Paid” adds this to the ledger automatically.</p>';
+
+  var footer = '<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="mf-save">' + UI.icon('check', 15) + ' Save Member</button>';
+  UI.showModal(isEdit ? 'Edit member' : 'Add member', body, footer);
+
+  function planFee(){ return s.settings.planFee[document.getElementById('mf-plan').value]; }
+  function updateAuto(){
+    var plan = document.getElementById('mf-plan').value;
+    var startMs = UI.parseDate(document.getElementById('mf-start').value) || Date.now();
+    document.getElementById('mf-renewal').value = UI.fmtDate(startMs + s.settings.planDays[plan] * Store.DAY);
+    document.getElementById('mf-fee').textContent = UI.money(s.settings.planFee[plan]);
+  }
+  document.getElementById('mf-fee').textContent = UI.money(planFee());
+  document.getElementById('mf-plan').addEventListener('change', updateAuto);
+  document.getElementById('mf-start').addEventListener('change', updateAuto);
+
+  document.getElementById('mf-save').addEventListener('click', function(){
+    var name = document.getElementById('mf-name').value.trim();
+    var phone = document.getElementById('mf-phone').value.trim();
+    var plan = document.getElementById('mf-plan').value;
+    var trainerId = document.getElementById('mf-trainer').value || null;
+    var startMs = UI.parseDate(document.getElementById('mf-start').value);
+    var renewalMs = UI.parseDate(document.getElementById('mf-renewal').value);
+    var notes = document.getElementById('mf-notes').value;
+    if (!name){ UI.toast('Name is required', 'error'); return; }
+    if (!startMs || !renewalMs){ UI.toast('Valid dates required', 'error'); return; }
+    var fee = s.settings.planFee[plan];
+    var actor = Auth.current();
+    if (isEdit){
+      m.name = name; m.phone = phone; m.plan = plan; m.trainerId = trainerId;
+      m.start = startMs; m.renewal = renewalMs; m.notes = notes; m.fee = fee;
+      Store.updateMember(m);
+      Store.log(actor ? actor.name : 'System', 'Updated member — ' + m.name);
+    } else {
+      Store.addMember({ name:name, phone:phone, plan:plan, trainerId:trainerId,
+        start:startMs, renewal:renewalMs, notes:notes, fee:fee, active:true });
+      Store.log(actor ? actor.name : 'System', 'Added member — ' + name);
+    }
+    UI.toast('Member saved', 'success');
+    UI.closeOverlay();
+    Views.members({});
+  });
+}
+
+/* ---------------- mark paid ---------------- */
+function markPaidFlow(m){
+  var fee = Store.get().settings.planFee[m.plan] || 0;
+  var days = Store.get().settings.planDays[m.plan] || 30;
+  UI.confirmAction('Mark as paid',
+    'Extend <b>' + UI.esc(m.name) + '</b> by <b>' + days + ' days</b> and record <b>' + UI.money(fee) + '</b> as income (Dues)?',
+    function(){
+      Store.markPaid(m);
+      var actor = Auth.current();
+      Store.log(actor ? actor.name : 'System', 'Renewed membership — ' + m.name + ' (' + UI.money(fee) + ')');
+      UI.toast(UI.money(fee) + ' recorded — renewal extended', 'success');
+      Views.members({});
+    }, 'Mark Paid');
+}
+
+/* ---------------- WhatsApp modal ---------------- */
+function reminderText(m){
+  var s = Store.get();
+  return s.settings.waReminder
+    .replace(/{name}/g, m.name).replace(/{gym}/g, s.settings.gymName).replace(/{date}/g, UI.fmtDate(m.renewal));
+}
+function quoteText(m){
+  var s = Store.get();
+  return s.settings.waQuote.replace(/{quote}/g, UI.randomQuote()).replace(/{gym}/g, s.settings.gymName);
+}
+function waModal(m){
+  var body =
+    '<div class="tabs"><button class="tab active" data-k="reminder">Reminder</button>' +
+    '<button class="tab" data-k="quote">Motivation</button>' +
+    '<button class="tab" data-k="custom">Custom</button></div>' +
+    '<textarea id="wa-text" class="input" rows="5"></textarea>' +
+    '<p class="muted small mt">To: <b>' + UI.esc(m.name) + '</b> · ' + UI.esc(m.phone) + ' · Renewal ' + UI.fmtDate(m.renewal) + '</p>';
+  var footer = '<button class="btn" data-close>Cancel</button>' +
+    '<button class="btn" id="wa-copy">' + UI.icon('copy', 14) + ' Copy</button>' +
+    '<button class="btn btn-primary" id="wa-send">' + UI.icon('send', 14) + ' Send WhatsApp</button>';
+  UI.showModal('WhatsApp — ' + UI.esc(m.name), body, footer);
+
+  var textEl = document.getElementById('wa-text');
+  textEl.value = reminderText(m);
+
+  Array.prototype.forEach.call(document.querySelectorAll('#modal-root .tab'), function(tb){
+    tb.addEventListener('click', function(){
+      Array.prototype.forEach.call(document.querySelectorAll('#modal-root .tab'), function(x){ x.classList.remove('active'); });
+      tb.classList.add('active');
+      var k = tb.getAttribute('data-k');
+      if (k === 'reminder') textEl.value = reminderText(m);
+      else if (k === 'quote') textEl.value = quoteText(m);
+      else textEl.value = '';
+    });
+  });
+  document.getElementById('wa-copy').addEventListener('click', function(){ UI.copyText(textEl.value); });
+  document.getElementById('wa-send').addEventListener('click', function(){
+    if (!textEl.value.trim()){ UI.toast('Message is empty', 'error'); return; }
+    UI.openWa(m.phone, textEl.value);
+    UI.toast('Opening WhatsApp…', 'success');
+  });
+}
+
+/* ---------------- QR modal ---------------- */
+function qrModal(m){
+  var payload = UI.qrPayload(m);
+  var body =
+    '<div class="qr-box"><img src="' + UI.qrUrl(m) + '" alt="QR pass" class="qr-img" onerror="this.outerHTML=\'<p class=&quot;muted center small&quot;>QR service unreachable (offline).<br>Fallback code: <b>' + m.id + '</b></p>\'" /></div>' +
+    '<p class="center"><b>' + UI.esc(m.name) + '</b> · ' + m.plan[0].toUpperCase() + m.plan.slice(1) + ' · renews ' + UI.fmtDate(m.renewal) + '</p>' +
+    '<p class="muted small center">Scan with <b>Attendance → Scan QR</b> for instant check-in.</p>';
+  var footer = '<button class="btn" data-close>Close</button>' +
+    '<button class="btn btn-primary" id="qr-wa">' + UI.icon('send', 14) + ' Share on WhatsApp</button>';
+  UI.showModal('Digital QR pass', body, footer);
+  document.getElementById('qr-wa').addEventListener('click', function(){
+    UI.openWa(m.phone, 'My ' + Store.get().settings.gymName + ' digital pass — scan me at the front desk. ' + payload);
+    UI.toast('Opening WhatsApp…', 'success');
+  });
+}
+
+/* ================= WORKOUT & DIET PLANS ================= */
+Views.plans = function(ctx){
+  var u = Auth.current();
+  var s = Store.get();
+  var isTrainer = u.role === 'trainer';
+  var members = s.members.filter(function(m){ return m.active !== false; });
+  if (isTrainer) members = members.filter(function(m){ return m.trainerId === u.id; });
+
+  if (!members.length){
+    document.getElementById('view').innerHTML =
+      '<div class="empty-state">' + (isTrainer
+        ? 'No clients assigned to you yet. Ask the manager to assign members to your trainer profile.'
+        : 'No active members yet. Add members from the Members screen first.') + '</div>';
+    return;
+  }
+  var selId = ctx && ctx.member ? ctx.member : members[0].id;
+  var m = Store.member(selId);
+  var plans = m ? s.plans.filter(function(p){ return p.memberId === m.id; }).sort(function(a,b){ return b.ts - a.ts; }) : [];
+
+  var html =
+  '<div class="page-head"><div><h1>Workout & Diet plans</h1>' +
+    '<p class="page-sub">Build structured routines and dispatch them straight to a member’s WhatsApp.</p></div></div>' +
+  '<div class="grid-2">' +
+    '<div class="card"><div class="card-head"><h3>Member</h3></div>' +
+      '<select id="pl-member" class="input">' +
+        members.map(function(x){ return '<option value="' + x.id + '"' + (x.id === selId ? ' selected' : '') + '>' + UI.esc(x.name) + '</option>'; }).join('') +
+      '</select>' +
+      '<div class="list mt" id="pl-list">' +
+        (plans.length ? plans.map(function(p){
+          return '<div class="list-row"><div class="list-main">' +
+            '<div><b>' + (p.kind === 'workout' ? UI.icon('dumbbell', 14) : UI.icon('clipboard', 14)) + ' ' + UI.esc(p.title) + '</b>' +
+            '<span class="muted small">' + UI.fmtDate(p.ts) + ' · ' + UI.esc(p.split || 'Diet plan') + '</span></div></div>' +
+            '<button class="btn btn-sm" data-action="pview" data-id="' + p.id + '">View</button>' +
+            '<button class="btn btn-sm btn-primary" data-action="psend" data-id="' + p.id + '">' + UI.icon('send', 12) + ' Send</button>' +
+            '<button class="icon-btn danger" data-action="pdel" data-id="' + p.id + '">' + UI.icon('trash', 13) + '</button></div>';
+        }).join('') : '<p class="muted small">No plans yet for ' + (m ? UI.esc(m.name) : 'this member') + '.</p>') +
+      '</div></div>' +
+    '<div class="card"><div class="card-head"><h3>Create a plan</h3></div>' +
+      '<p class="muted small">Choose a split, fill daily routines & diet instructions, then save locally or send the whole structure to WhatsApp.</p>' +
+      '<button class="btn btn-primary btn-block mt" data-action="new-plan" data-kind="workout">' + UI.icon('dumbbell', 15) + ' New Workout Plan</button>' +
+      '<button class="btn btn-block mt" data-action="new-plan" data-kind="diet">' + UI.icon('clipboard', 15) + ' New Diet Plan</button></div>' +
+  '</div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  var sel = document.getElementById('pl-member');
+  sel.addEventListener('change', function(){ Views.plans({ member: sel.value }); });
+
+  document.getElementById('view').onclick = function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t || !m) return;
+    var act = t.getAttribute('data-action'), id = t.getAttribute('data-id');
+    var p = id ? s.plans.find(function(x){ return x.id === id; }) : null;
+    if (act === 'new-plan') planBuilder(m, t.getAttribute('data-kind'));
+    else if (act === 'pview' && p) planView(p, m);
+    else if (act === 'psend' && p){
+      UI.openWa(m.phone, planText(p, m));
+      UI.toast('Opening WhatsApp…', 'success');
+    }
+    else if (act === 'pdel' && p){
+      UI.confirmAction('Delete plan', 'Delete “' + UI.esc(p.title) + '”?', function(){
+        Store.deletePlan(p.id);
+        UI.toast('Plan deleted', 'success');
+        Views.plans({ member: m.id });
+      }, 'Delete');
+    }
+  };
+};
+
+/* ---------------- plan builder ---------------- */
+var PB_VALS = [];
+function planBuilder(m, kind){
+  var u = Auth.current();
+  var isWorkout = kind === 'workout';
+  var title = (isWorkout ? 'Workout plan' : 'Diet plan') + ' — ' + m.name;
+
+  var body =
+    '<div class="field"><label>Plan title</label><input id="pb-title" class="input" value="' + UI.esc(m.name) + (isWorkout ? ' — Workout' : ' — Diet') + '" /></div>' +
+    (isWorkout
+      ? '<div class="field"><label>Workout split</label><select id="pb-split" class="input">' + splitOptions('push-pull-legs') + '</select></div><div id="pb-days"></div>'
+      : '<div id="pb-meals"></div>') +
+    '<p class="muted small mt">Daily routine text is included in the WhatsApp message exactly as written.</p>';
+
+  var footer = '<button class="btn" data-close>Cancel</button>' +
+    '<button class="btn" id="pb-save">' + UI.icon('database', 14) + ' Save locally</button>' +
+    '<button class="btn btn-primary" id="pb-send">' + UI.icon('send', 14) + ' Save & Send</button>';
+
+  UI.showModal(title, body, footer, { size:'lg' });
+
+  if (isWorkout){
+    PB_VALS = [];
+    renderDays('push-pull-legs');
+    document.getElementById('pb-split').addEventListener('change', function(){ renderDays(this.value); });
+  } else {
+    document.getElementById('pb-meals').innerHTML =
+      MEALS.map(function(mk){
+        return '<div class="field"><label>' + mk.label + '</label><textarea class="input plan-textarea" data-meal="' + mk.k + '" placeholder="Food, portions & timing…"></textarea></div>';
+      }).join('');
+  }
+
+  function renderDays(key){
+    var sp = SPLITS[key];
+    document.getElementById('pb-days').innerHTML = sp.days.map(function(label, i){
+      return '<div class="plan-day"><div class="plan-day-label">' + label + '</div>' +
+        '<textarea class="input plan-textarea" data-d="' + i + '" placeholder="Exercises, sets & reps…">' + UI.esc(PB_VALS[i] || '') + '</textarea></div>';
+    }).join('');
+  }
+
+  function collect(){
+    var plan = {
+      memberId: m.id, trainerId: u.id, kind: kind,
+      title: document.getElementById('pb-title').value.trim() || (isWorkout ? 'Workout' : 'Diet'),
+      split: null, days: [], meals: {}
+    };
+    if (isWorkout){
+      var key = document.getElementById('pb-split').value;
+      plan.split = SPLITS[key].label;
+      plan.days = SPLITS[key].days.map(function(label, i){
+        return { label: label, text: (document.querySelector('[data-d="' + i + '"]') || {}).value || '' };
+      });
+      plan.meals = null;
+    } else {
+      plan.split = 'Diet';
+      plan.days = [];
+      plan.meals = {};
+      MEALS.forEach(function(mk){
+        var el = document.querySelector('[data-meal="' + mk.k + '"]');
+        plan.meals[mk.k] = el ? el.value : '';
+      });
+    }
+    return plan;
+  }
+
+  document.getElementById('pb-save').addEventListener('click', function(){
+    var p = Store.addPlan(collect());
+    UI.toast('Plan saved locally', 'success');
+    UI.closeOverlay();
+    Views.plans({ member: m.id });
+  });
+  document.getElementById('pb-send').addEventListener('click', function(){
+    var p = Store.addPlan(collect());
+    UI.toast('Plan saved & WhatsApp opening…', 'success');
+    UI.closeOverlay();
+    UI.openWa(m.phone, planText(p, m));
+    Views.plans({ member: m.id });
+  });
+}
+
+function planText(p, m){
+  var s = Store.get();
+  var trainer = Store.user(p.trainerId);
+  var L = [];
+  L.push('💪 ' + p.title.toUpperCase());
+  L.push('📍 ' + s.settings.gymName + (trainer ? ' · Trainer: ' + trainer.name : ''));
+  if (p.split) L.push('🗂️ Split: ' + p.split);
+  L.push('──────────────────');
+  L.push('');
+  (p.days || []).forEach(function(d){
+    if (d && d.text && d.text.trim()){
+      L.push('🏋️ ' + d.label);
+      L.push(d.text.trim());
+      L.push('');
+    }
+  });
+  if (p.meals){
+    var any = MEALS.some(function(mk){ return (p.meals[mk.k] || '').trim(); });
+    if (any){
+      L.push('🥗 DIET PLAN');
+      MEALS.forEach(function(mk){
+        var v = (p.meals[mk.k] || '').trim();
+        if (v){ L.push(mk.label); L.push(v); L.push(''); }
+      });
+    }
+  }
+  L.push('Stay consistent — see you at the gym! 💪');
+  return L.join('\n');
+}
+
+function planView(p, m){
+  var body = '<pre class="plan-text">' + UI.esc(planText(p, m)) + '</pre>';
+  var footer = '<button class="btn" data-close>Close</button>' +
+    '<button class="btn" id="pv-copy">' + UI.icon('copy', 14) + ' Copy</button>' +
+    '<button class="btn btn-primary" id="pv-send">' + UI.icon('send', 14) + ' Send WhatsApp</button>';
+  UI.showModal(UI.esc(p.title), body, footer, { size:'lg' });
+  document.getElementById('pv-copy').addEventListener('click', function(){ UI.copyText(planText(p, m)); });
+  document.getElementById('pv-send').addEventListener('click', function(){
+    UI.openWa(m.phone, planText(p, m));
+    UI.toast('Opening WhatsApp…', 'success');
+  });
+}
+
+;
+/* === js/views-commerce.js === */
+/* ============================================================
+   GymFlow — Views: POS & Supplement Store, Finances & Ledger
+   ============================================================ */
+window.Views = window.Views || {};
+
+/* ================= POS & STORE ================= */
+Views.pos = function(ctx){
+  var s = Store.get();
+  var lowCount = s.products.filter(function(p){ return p.stock > 0 && p.stock < s.settings.lowStock; }).length;
+  var outCount = s.products.filter(function(p){ return p.stock <= 0; }).length;
+
+  var html =
+  '<div class="page-head"><div><h1>Supplement store</h1>' +
+    '<p class="page-sub">' + lowCount + ' low-stock · ' + outCount + ' out of stock</p></div>' +
+    '<div class="page-actions">' +
+      '<button class="btn" data-action="manage-products">' + UI.icon('list', 15) + ' Products</button>' +
+      '<button class="btn btn-primary" data-action="checkout">' + UI.icon('cart', 15) + ' New Sale</button>' +
+    '</div></div>' +
+  '<div class="product-grid">' +
+    s.products.map(function(p){
+      var low = p.stock <= 0 ? 'out' : (p.stock < s.settings.lowStock ? 'low' : 'ok');
+      var stockHtml = low === 'out' ? '<span class="stock-badge st-out">Out of stock</span>'
+        : low === 'low' ? '<span class="stock-badge st-low">Low: ' + p.stock + ' left</span>'
+        : '<span class="stock-badge st-ok">' + p.stock + ' in stock</span>';
+      return '<div class="product-card">' +
+        '<span class="p-emoji">' + (p.emoji ? UI.esc(p.emoji) : UI.icon('store', 20)) + '</span>' +
+        '<div class="p-name">' + UI.esc(p.name) + '</div>' +
+        '<div class="p-price">' + UI.money(p.price) + '</div>' + stockHtml +
+        '<button class="btn btn-sm btn-primary mt" data-action="add-to-cart" data-id="' + p.id + '"' + (p.stock <= 0 ? ' disabled' : '') + '>' +
+        UI.icon('plus', 13) + ' Add</button></div>';
+    }).join('') +
+  '</div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  var cart = {};
+  if (ctx && ctx.open === 'checkout') checkoutModal(cart);
+
+  document.getElementById('view').onclick = function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var act = t.getAttribute('data-action');
+    if (act === 'checkout') checkoutModal(cart);
+    else if (act === 'manage-products') manageProducts();
+    else if (act === 'add-to-cart'){
+      var id = t.getAttribute('data-id');
+      var p = s.products.find(function(x){ return x.id === id; });
+      if (!p || p.stock <= 0) return;
+      cart[id] = (cart[id] || 0) + 1;
+      UI.toast(p.name + ' ×' + cart[id] + ' added', 'success');
+    }
+  };
+};
+
+function manageProducts(){
+  var s = Store.get();
+  var body = '<div class="table-wrap"><table class="table"><thead><tr><th>Product</th><th>Price</th><th class="th-numeric">Stock</th><th class="th-numeric">Alert at</th><th></th></tr></thead><tbody>' +
+    s.products.map(function(p){
+      return '<tr><td>' + UI.esc(p.name) + '</td><td>' + UI.money(p.price) + '</td>' +
+        '<td class="numeric">' + p.stock + '</td><td class="numeric">' + p.threshold + '</td>' +
+        '<td><div class="row-actions">' +
+        '<button class="icon-btn" data-action="pedit" data-id="' + p.id + '" title="Edit">' + UI.icon('pencil', 14) + '</button>' +
+        '<button class="icon-btn danger" data-action="pdel" data-id="' + p.id + '" title="Delete">' + UI.icon('trash', 14) + '</button></div></td></tr>';
+    }).join('') + '</tbody></table></div>';
+  var footer = '<button class="btn" data-close>Close</button><button class="btn btn-primary" id="padd">' + UI.icon('plus', 14) + ' Add Product</button>';
+  UI.showModal('Manage products', body, footer, { size:'lg' });
+
+  document.getElementById('padd').addEventListener('click', function(){ productForm(null); });
+
+  document.querySelector('#modal-root .modal').addEventListener('click', function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var act = t.getAttribute('data-action'), id = t.getAttribute('data-id');
+    var p = s.products.find(function(x){ return x.id === id; });
+    if (act === 'pedit' && p) productForm(p);
+    else if (act === 'pdel' && p){
+      UI.confirmAction('Delete product', 'Delete “' + UI.esc(p.name) + '”?', function(){
+        Store.deleteProduct(p.id);
+        UI.toast('Product deleted', 'success');
+        Views.pos();
+      }, 'Delete');
+    }
+  });
+}
+
+function productForm(p){
+  var body =
+    '<div class="form-grid-2">' +
+      '<div class="field"><label>Product name *</label><input id="pf-name" class="input" value="' + (p ? UI.esc(p.name) : '') + '" /></div>' +
+      '<div class="field"><label>Emoji icon (optional)</label><input id="pf-emoji" class="input" value="' + (p ? UI.esc(p.emoji || '') : '') + '" placeholder="e.g. 🥤" /></div>' +
+      '<div class="field"><label>Price (' + Store.get().settings.currency + ')</label><input id="pf-price" type="number" min="0" class="input" value="' + (p ? p.price : '') + '" /></div>' +
+      '<div class="field"><label>Stock qty</label><input id="pf-stock" type="number" min="0" class="input" value="' + (p ? p.stock : '0') + '" /></div>' +
+      '<div class="field"><label>Low-stock alert at</label><input id="pf-thr" type="number" min="0" class="input" value="' + (p ? p.threshold : '5') + '" /></div>' +
+    '</div>';
+  var footer = '<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="pf-save">' + UI.icon('check', 15) + ' Save</button>';
+  UI.showModal(p ? 'Edit product' : 'Add product', body, footer);
+  document.getElementById('pf-save').addEventListener('click', function(){
+    var name = document.getElementById('pf-name').value.trim();
+    if (!name){ UI.toast('Name required', 'error'); return; }
+    var obj = {
+      name: name, emoji: document.getElementById('pf-emoji').value.trim() || '',
+      price: +document.getElementById('pf-price').value || 0,
+      stock: +document.getElementById('pf-stock').value || 0,
+      threshold: +document.getElementById('pf-thr').value || 5
+    };
+    if (p){ obj.id = p.id; Store.updateProduct(obj); }
+    else Store.addProduct(obj);
+    UI.toast('Product saved', 'success');
+    UI.closeOverlay();
+    Views.pos();
+  });
+}
+
+/* ---------------- checkout ---------------- */
+function checkoutModal(preCart){
+  var s = Store.get();
+  var cart = {}; for (var k in (preCart || {})) cart[k] = preCart[k];
+  var customerType = 'walkin';
+  var customerName = '', memberId = null;
+
+  var body =
+    '<div class="checkout-cust">' +
+      '<button class="cust-btn active" data-ctype="walkin">' + UI.icon('store', 15) + ' Walk-in</button>' +
+      '<button class="cust-btn" data-ctype="member">' + UI.icon('user', 15) + ' Registered member</button>' +
+    '</div>' +
+    '<div id="cust-member" class="hidden"><input id="co-search" class="search-input" placeholder="Search member…" />' +
+      '<div id="co-members" class="list mt"></div></div>' +
+    '<div class="table-wrap mt"><table class="table"><thead><tr><th>Item</th><th>Price</th><th style="width:150px">Qty</th><th class="th-numeric">Total</th></tr></thead>' +
+    '<tbody id="co-items"></tbody></table></div>' +
+    '<div class="co-total"><span>Total</span><b id="co-grand">' + UI.money(0) + '</b></div>';
+
+  var footer = '<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="co-pay">' + UI.icon('card', 15) + ' Complete Sale</button>';
+  UI.showModal('Checkout', body, footer, { size:'lg' });
+
+  var custRow = function(cm){
+    return '<div class="list-row list-click" data-mid="' + cm.id + '">' + UI.avatar(cm.name) +
+      '<div class="list-main"><b>' + UI.esc(cm.name) + '</b><span class="muted small">' + UI.esc(cm.plan) + '</span></div>' +
+      UI.badge(Store.statusOf(cm)) + '</div>';
+  };
+
+  Array.prototype.forEach.call(document.querySelectorAll('#modal-root .cust-btn'), function(b){
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(document.querySelectorAll('#modal-root .cust-btn'), function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      customerType = b.getAttribute('data-ctype');
+      document.getElementById('cust-member').classList.toggle('hidden', customerType !== 'member');
+      memberId = null; customerName = '';
+    });
+  });
+
+  var coSearch = document.getElementById('co-search');
+  if (coSearch){
+    coSearch.addEventListener('input', function(){
+      var q = coSearch.value.toLowerCase();
+      var res = s.members.filter(function(m){ return m.active !== false && (m.name.toLowerCase().indexOf(q) > -1 || (m.phone||'').replace(/\s/g,'').indexOf(q.replace(/\s/g,'')) > -1); }).slice(0,6);
+      document.getElementById('co-members').innerHTML = res.map(custRow).join('') || '<p class="muted small">No members found</p>';
+    });
+    document.getElementById('co-members').addEventListener('click', function(e){
+      var row = e.target.closest('[data-mid]');
+      if (!row) return;
+      var m = Store.member(row.getAttribute('data-mid'));
+      memberId = m.id; customerName = m.name;
+      document.getElementById('co-members').innerHTML =
+        '<div class="list-row"><div class="list-main">' + UI.avatar(m.name) + '<div><b>' + UI.esc(m.name) + '</b><span class="muted small">selected as customer</span></div></div>' + UI.icon('check', 15) + '</div>';
+    });
+  }
+
+  function render(){
+    var items = s.products.filter(function(p){ return cart[p.id]; });
+    document.getElementById('co-items').innerHTML = items.map(function(p){
+      var qty = cart[p.id];
+      return '<tr><td>' + UI.esc(p.name) + '</td><td>' + UI.money(p.price) + '</td>' +
+        '<td><div class="qty"><button class="icon-btn" data-q="' + p.id + '" data-d="-1">−</button>' +
+        '<span>' + qty + '</span><button class="icon-btn" data-q="' + p.id + '" data-d="1">+</button></div></td>' +
+        '<td class="numeric"><b>' + UI.money(qty * p.price) + '</b></td></tr>';
+    }).join('') || '<tr><td colspan="4" class="empty-td">Cart is empty — pick products from the store grid first.</td></tr>';
+    var total = items.reduce(function(sum, p){ return sum + cart[p.id] * p.price; }, 0);
+    document.getElementById('co-grand').textContent = UI.money(total);
+  }
+  render();
+
+  document.querySelector('#modal-root .modal').addEventListener('click', function(e){
+    var t = e.target.closest('[data-d]');
+    if (!t) return;
+    var id = t.getAttribute('data-q'), d = +t.getAttribute('data-d');
+    var p = s.products.find(function(x){ return x.id === id; });
+    var next = (cart[id] || 0) + d;
+    if (next < 1) next = 1;
+    if (next > p.stock){ UI.toast('Only ' + p.stock + ' in stock', 'error'); return; }
+    cart[id] = next;
+    render();
+  });
+
+  document.getElementById('co-pay').addEventListener('click', function(){
+    var items = s.products.filter(function(p){ return cart[p.id]; });
+    if (!items.length){ UI.toast('Cart is empty', 'error'); return; }
+    var saleItems = items.map(function(p){ return { productId: p.id, qty: cart[p.id], name: p.name, price: p.price }; });
+    var total = Store.sell(saleItems, memberId, customerName);
+    var actor = Auth.current();
+    Store.log(actor ? actor.name : 'System', 'Completed POS sale' + (customerName ? ' — ' + customerName : '') + ' (' + UI.money(total) + ')');
+    UI.closeOverlay();
+    receiptModal(saleItems, total, customerName, memberId);
+    Views.pos();
+  });
+}
+
+/* ---------------- receipt ---------------- */
+function receiptModal(items, total, customerName, memberId){
+  var s = Store.get();
+  var m = memberId ? Store.member(memberId) : null;
+  var rows = items.map(function(it){
+    return '<div class="r-row"><span>' + UI.esc(it.name) + ' ×' + it.qty + '</span><b>' + UI.money(it.qty * it.price) + '</b></div>';
+  }).join('');
+  var body =
+    '<div class="receipt print-area">' +
+      '<div class="r-head"><b>' + UI.esc(s.settings.gymName) + '</b><br><span class="muted small">Sale receipt</span><br>' +
+      '<span class="muted small">' + new Date().toLocaleDateString('en-PK', { year:'numeric', month:'short', day:'numeric' }) + ' · ' + UI.fmtTime(Date.now()) + '</span></div>' +
+      '<div class="r-row"><span class="muted">Customer</span><b>' + (customerName ? UI.esc(customerName) : 'Walk-in') + '</b></div>' +
+      (m ? '<div class="r-row"><span class="muted">Member ID</span><b>' + m.name + '</b></div>' : '') +
+      '<div class="r-rule"></div>' + rows + '<div class="r-rule"></div>' +
+      '<div class="r-row"><b>Total</b><b>' + UI.money(total) + '</b></div>' +
+      '<div class="r-row"><span class="muted small">Payment</span><span class="muted small">Paid</span></div>' +
+      '<p class="muted small center" style="margin-top:14px">Thank you for shopping! 💪</p>' +
+    '</div>';
+  var footer = '<button class="btn" data-close>Close</button>' +
+    '<button class="btn btn-primary" id="r-print">' + UI.icon('printer', 14) + ' Print</button>';
+  UI.showModal('Sale complete', body, footer);
+  document.getElementById('r-print').addEventListener('click', function(){ window.print(); });
+}
+
+/* ================= FINANCES ================= */
+Views.finance = function(ctx){
+  var s = Store.get();
+  var all = s.transactions;
+  var totalRev = all.filter(function(t){ return t.type === 'income'; }).reduce(function(a,t){ return a + t.amount; }, 0);
+  var totalExp = all.filter(function(t){ return t.type === 'expense'; }).reduce(function(a,t){ return a + t.amount; }, 0);
+  var net = totalRev - totalExp;
+  var dues = Store.overdueDues();
+  var mr = Store.monthRange(Date.now());
+  var monthNet = Store.revenueBetween(mr.start, mr.end) - Store.expensesBetween(mr.start, mr.end);
+
+  var html =
+  '<div class="page-head"><div><h1>Finances</h1>' +
+    '<p class="page-sub">Revenue, expenses, net profit/loss and overdue dues — auto-calculated from the ledger.</p></div>' +
+    '<div class="page-actions">' +
+      '<button class="btn" id="fin-export">' + UI.icon('download', 15) + ' Export CSV</button>' +
+      '<button class="btn btn-primary" data-action="add-tx">' + UI.icon('plus', 15) + ' Add Transaction</button>' +
+    '</div></div>' +
+
+  '<div class="stat-grid">' +
+    statCard('banknote', 'green', UI.money(totalRev), 'Total revenue', all.filter(function(t){return t.type==='income';}).length + ' entries', '') +
+    statCard('list', 'red', UI.money(totalExp), 'Total expenses', all.filter(function(t){return t.type==='expense';}).length + ' entries', '') +
+    statCard('up', net >= 0 ? 'blue' : 'red', UI.money(net), 'Net profit / loss', monthNet >= 0 ? 'positive this month' : 'negative this month', '') +
+    statCard('alert', 'amber', UI.money(dues), 'Overdue dues', 'collect from members', 'members') +
+  '</div>' +
+
+  '<div class="grid-2">' +
+    '<div class="card"><div class="card-head"><h3>Monthly income vs expenses</h3></div>' +
+      '<div class="chart-box"><canvas id="ch-fin-month"></canvas></div></div>' +
+    '<div class="card"><div class="card-head"><h3>Expenses by category</h3></div>' +
+      '<div class="chart-box"><canvas id="ch-fin-cat"></canvas></div></div>' +
+  '</div>' +
+
+  '<div class="card mt"><div class="card-head"><h3>Transactions</h3>' +
+    '<div class="toolbar-inline" style="display:flex;gap:8px">' +
+      '<select id="ft-type" class="select"><option value="">All types</option><option value="income">Income</option><option value="expense">Expense</option></select>' +
+      '<select id="ft-cat" class="select">' + catOptions('') + '</select>' +
+    '</div></div>' +
+    '<div class="table-wrap"><table class="table"><thead><tr>' +
+      '<th>Date</th><th>Type</th><th>Category</th><th>Description</th><th class="th-numeric">Amount</th><th></th>' +
+    '</tr></thead><tbody id="tx-body"></tbody></table></div></div>' +
+
+  '<div class="card mt"><div class="card-head"><h3>Overdue members</h3><span class="count-pill">' + UI.money(dues) + '</span></div>' +
+    '<div class="list" id="ovd-list"></div></div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  if (ctx && ctx.open === 'add-tx') txForm();
+
+  /* charts */
+  var series = [];
+  var dd = new Date();
+  for (var i = 5; i >= 0; i--){
+    var d0 = new Date(dd.getFullYear(), dd.getMonth() - i, 1);
+    var r = Store.monthRange(d0.getTime());
+    series.push({ label: d0.toLocaleDateString('en', { month:'short' }),
+      income: Store.revenueBetween(r.start, r.end), expense: Store.expensesBetween(r.start, r.end) });
+  }
+  var cats = {};
+  all.filter(function(t){ return t.type === 'expense'; }).forEach(function(t){ cats[t.category] = (cats[t.category] || 0) + t.amount; });
+  if (window.Chart){
+    App.chart('ch-fin-month', { type:'bar', data:{
+        labels: series.map(function(x){ return x.label; }),
+        datasets: [
+          { label:'Income', data: series.map(function(x){ return x.income; }), backgroundColor:'rgba(5,150,105,.8)', borderRadius:5 },
+          { label:'Expenses', data: series.map(function(x){ return x.expense; }), backgroundColor:'rgba(220,38,38,.75)', borderRadius:5 }
+        ] },
+      options: baseOpts('Rs', '') });
+    var catKeys = Object.keys(cats);
+    App.chart('ch-fin-cat', { type:'doughnut', data:{
+        labels: catKeys,
+        datasets:[{ data: catKeys.map(function(k){ return cats[k]; }),
+          backgroundColor: ['#059669','#d97706','#0284c7','#7c3aed','#dc2626','#ea580c','#0d9488','#db2777'] }] },
+      options: { responsive:true, maintainAspectRatio:false,
+        plugins: { legend: { position:'right', labels: { color:'#98a2b3', boxWidth:10, boxHeight:10, usePointStyle:true, font:{size:11} } } } } });
+  } else {
+    Array.prototype.forEach.call(document.querySelectorAll('.chart-box'), function(b){ b.innerHTML = '<p>Charts need internet (Chart.js).</p>'; });
+  }
+
+  /* transactions table */
+  var F = { type:'', cat:'' };
+  function renderTx(){
+    var rows = all.filter(function(t){
+      if (F.type && t.type !== F.type) return false;
+      if (F.cat && t.category !== F.cat) return false;
+      return true;
+    }).sort(function(a,b){ return b.ts - a.ts; });
+    document.getElementById('tx-body').innerHTML = rows.map(function(t){
+      var pos = t.type === 'income';
+      return '<tr><td>' + UI.fmtDate(t.ts) + '</td>' +
+        '<td>' + (pos ? '<span class="badge b-active">Income</span>' : '<span class="badge b-overdue">Expense</span>') + '</td>' +
+        '<td><span class="plan-chip">' + UI.esc(t.category) + '</span></td>' +
+        '<td>' + UI.esc(t.desc || '') + '</td>' +
+        '<td class="numeric ' + (pos ? 'amt-pos' : 'amt-neg') + '">' + (pos ? '+' : '−') + UI.money(t.amount) + '</td>' +
+        '<td><button class="icon-btn danger" data-action="tx-del" data-id="' + t.id + '" title="Delete">' + UI.icon('trash', 14) + '</button></td></tr>';
+    }).join('') || '<tr><td colspan="6" class="empty-td">No transactions.</td></tr>';
+  }
+  renderTx();
+  document.getElementById('ft-type').addEventListener('change', function(){ F.type = this.value; renderTx(); });
+  document.getElementById('ft-cat').addEventListener('change', function(){ F.cat = this.value; renderTx(); });
+  document.getElementById('fin-export').addEventListener('click', function(){
+    UI.download('transactions-' + UI.todayStr() + '.csv', Store.exportTransactionsCSV(), 'text/csv');
+    UI.toast('Transactions CSV downloaded', 'success');
+  });
+
+  /* overdue list */
+  var ovd = s.members.filter(function(m){ return Store.statusOf(m) === 'overdue'; }).sort(function(a,b){ return a.renewal - b.renewal; });
+  document.getElementById('ovd-list').innerHTML = ovd.map(function(m){
+    return '<div class="list-row"><div class="list-main">' + UI.avatar(m.name) +
+      '<div><b>' + UI.esc(m.name) + '</b><span class="muted small">due ' + UI.fmtDate(m.renewal) + ' · ' + UI.money(s.settings.planFee[m.plan]) + '</span></div></div>' +
+      '<button class="btn btn-sm btn-primary" data-action="paid" data-id="' + m.id + '">Mark Paid</button></div>';
+  }).join('') || '<p class="muted small">No overdue members.</p>';
+
+  document.getElementById('view').onclick = function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var act = t.getAttribute('data-action'), id = t.getAttribute('data-id');
+    if (act === 'go') App.nav(t.getAttribute('data-view'));
+    else if (act === 'add-tx') txForm();
+    else if (act === 'tx-del'){
+      UI.confirmAction('Delete transaction', 'Delete this ledger entry?', function(){
+        Store.deleteTransaction(id);
+        UI.toast('Transaction deleted', 'success');
+        Views.finance();
+      }, 'Delete');
+    }
+    else if (act === 'paid' && id){
+      var m = Store.member(id);
+      if (m) markPaidFlow(m);
+    }
+  };
+};
+
+function catOptions(sel){
+  var cats = ['Dues','Supplements','Lockers','Rent','Utilities','Salaries','Equipment','Other'];
+  return '<option value="">All categories</option>' + cats.map(function(c){
+    return '<option value="' + c + '"' + (sel === c ? ' selected' : '') + '>' + c + '</option>';
+  }).join('');
+}
+function txForm(){
+  var body =
+    '<div class="form-grid-2">' +
+      '<div class="field"><label>Type</label><select id="tx-type" class="input">' +
+        '<option value="income">Income</option><option value="expense">Expense</option></select></div>' +
+      '<div class="field"><label>Category</label><select id="tx-cat" class="input"></select></div>' +
+      '<div class="field"><label>Amount (' + Store.get().settings.currency + ') *</label><input id="tx-amt" type="number" min="0" class="input" /></div>' +
+      '<div class="field"><label>Date</label><input type="date" id="tx-date" class="input" value="' + UI.todayStr() + '" /></div>' +
+    '</div>' +
+    '<div class="field"><label>Description</label><input id="tx-desc" class="input" placeholder="e.g. Monthly gym hall rent" /></div>';
+  var footer = '<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="tx-save">' + UI.icon('check', 15) + ' Save</button>';
+  UI.showModal('Add transaction', body, footer);
+
+  var incomeCats = ['Dues','Supplements','Lockers','Other'];
+  var expenseCats = ['Rent','Utilities','Salaries','Equipment','Supplements','Other'];
+  function renderCats(){
+    var type = document.getElementById('tx-type').value;
+    var list = type === 'income' ? incomeCats : expenseCats;
+    document.getElementById('tx-cat').innerHTML = list.map(function(c){ return '<option>' + c + '</option>'; }).join('');
+  }
+  renderCats();
+  document.getElementById('tx-type').addEventListener('change', renderCats);
+
+  document.getElementById('tx-save').addEventListener('click', function(){
+    var amt = +document.getElementById('tx-amt').value;
+    if (!amt || amt <= 0){ UI.toast('Enter a valid amount', 'error'); return; }
+    Store.addTransaction({
+      type: document.getElementById('tx-type').value,
+      category: document.getElementById('tx-cat').value,
+      amount: amt,
+      desc: document.getElementById('tx-desc').value.trim(),
+      ts: UI.parseDate(document.getElementById('tx-date').value) || Date.now()
+    }, false);
+    UI.toast('Transaction added', 'success');
+    UI.closeOverlay();
+    Views.finance();
+  });
+}
+
+;
+/* === js/views-admin.js === */
+/* ============================================================
+   GymFlow — Views: Staff Schedule, Lockers, Settings & Backup
+   ============================================================ */
+window.Views = window.Views || {};
+
+var WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+/* ================= SCHEDULE ================= */
+Views.schedule = function(){
+  var s = Store.get();
+  var shifts = s.shifts;
+  var staff = {};
+  shifts.forEach(function(sh){ staff[sh.staffName] = sh.role; });
+  var staffNames = Object.keys(staff).sort();
+
+  var html =
+  '<div class="page-head"><div><h1>Staff schedule</h1>' +
+    '<p class="page-sub">Weekly working shifts for every staff role.</p></div>' +
+    '<div class="page-actions"><button class="btn btn-primary" data-action="add-shift">' + UI.icon('plus', 15) + ' Add Shift</button></div></div>' +
+
+  '<div class="card"><div class="table-wrap"><table class="table schedule-table"><thead><tr>' +
+    '<th style="width:170px;text-align:left">Staff</th>' + WEEKDAYS.map(function(d){ return '<th>' + d + '</th>'; }).join('') +
+  '</tr></thead><tbody>' +
+    staffNames.map(function(nm){
+      return '<tr><td style="text-align:left"><b>' + UI.esc(nm) + '</b><div class="muted small">' + UI.esc(staff[nm]) + '</div></td>' +
+        WEEKDAYS.map(function(_, di){
+          var cell = shifts.filter(function(sh){ return sh.staffName === nm && sh.day === di; });
+          return '<td class="shift-cell">' + (cell.length ? cell.map(function(sh){
+            return '<span class="shift-chip">' + sh.start + '–' + sh.end +
+              '<button class="shift-x" data-action="del-shift" data-id="' + sh.id + '" title="Remove">✕</button></span>';
+          }).join('') : '') + '</td>';
+        }).join('') + '</tr>';
+    }).join('') +
+  '</tbody></table></div></div>' +
+
+  '<div class="card mt"><div class="card-head"><h3>Staff summary</h3></div>' +
+    '<div class="list">' + staffNames.map(function(nm){
+      var total = shifts.filter(function(sh){ return sh.staffName === nm; });
+      return '<div class="list-row"><div class="list-main">' + UI.avatar(nm) +
+        '<div><b>' + UI.esc(nm) + '</b><span class="muted small">' + UI.esc(staff[nm]) + ' · ' + total.length + ' shifts / week</span></div></div></div>';
+    }).join('') + '</div></div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  document.getElementById('view').onclick = function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var act = t.getAttribute('data-action'), id = t.getAttribute('data-id');
+    if (act === 'add-shift') shiftForm();
+    else if (act === 'del-shift'){
+      UI.confirmAction('Remove shift', 'Remove this shift?', function(){
+        Store.deleteShift(id);
+        UI.toast('Shift removed', 'success');
+        Views.schedule();
+      }, 'Remove');
+    }
+  };
+};
+
+function shiftForm(){
+  var s = Store.get();
+  var staffOpts = s.users.map(function(u){
+    return '<option value="' + u.name + '">' + UI.esc(u.name) + ' (' + Auth.roleLabel(u.role) + ')</option>';
+  }).join('');
+  var dayOpts = WEEKDAYS.map(function(d, i){ return '<option value="' + i + '">' + d + '</option>'; }).join('');
+
+  var body =
+    '<div class="form-grid-2">' +
+      '<div class="field"><label>Staff member</label><select id="sf-staff" class="input">' + staffOpts + '</select></div>' +
+      '<div class="field"><label>Day</label><select id="sf-day" class="input">' + dayOpts + '</select></div>' +
+      '<div class="field"><label>Start time</label><input type="time" id="sf-start" class="input" value="09:00" /></div>' +
+      '<div class="field"><label>End time</label><input type="time" id="sf-end" class="input" value="17:00" /></div>' +
+    '</div>';
+  var footer = '<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="sf-save">' + UI.icon('check', 15) + ' Save Shift</button>';
+  UI.showModal('Add shift', body, footer);
+
+  document.getElementById('sf-save').addEventListener('click', function(){
+    var nm = document.getElementById('sf-staff').value;
+    var u = s.users.find(function(x){ return x.name === nm; });
+    Store.addShift({
+      staffName: nm, role: u ? Auth.roleLabel(u.role) : 'Staff',
+      day: +document.getElementById('sf-day').value,
+      start: document.getElementById('sf-start').value || '09:00',
+      end: document.getElementById('sf-end').value || '17:00'
+    });
+    UI.toast('Shift saved', 'success');
+    UI.closeOverlay();
+    Views.schedule();
+  });
+}
+
+/* ================= LOCKERS ================= */
+Views.lockers = function(){
+  var s = Store.get();
+  var lockers = s.lockers.slice().sort(function(a,b){ return a.num - b.num; });
+  var occupied = lockers.filter(function(l){ return l.memberId; }).length;
+  var vacant = lockers.length - occupied;
+  var monthly = lockers.filter(function(l){ return l.memberId; }).reduce(function(a,l){ return a + l.fee; }, 0);
+
+  var html =
+  '<div class="page-head"><div><h1>Lockers</h1>' +
+    '<p class="page-sub">' + occupied + ' occupied · ' + vacant + ' vacant · monthly locker income ' + UI.money(monthly) + '</p></div>' +
+    '<div class="page-actions"><button class="btn btn-primary" data-action="add-locker">' + UI.icon('plus', 15) + ' Add Locker</button></div></div>' +
+
+  '<div class="locker-grid">' +
+    lockers.map(function(l){
+      var m = l.memberId ? Store.member(l.memberId) : null;
+      var cls = m ? (Store.statusOf(m) === 'overdue' ? 'lk-overdue' : 'lk-occupied') : 'lk-vacant';
+      return '<div class="locker-card ' + cls + '">' +
+        '<div class="lk-head"><span class="lk-num">Locker #' + l.num + '</span>' +
+          (m ? '<span class="badge b-active">Occupied</span>' : '<span class="badge b-inactive">Vacant</span>') + '</div>' +
+        (m ? '<div class="lk-mem">' + UI.avatar(m.name) + '<div><b>' + UI.esc(m.name) + '</b>' +
+          '<span class="muted small">' + UI.esc(m.plan) + '</span></div></div>'
+          : '<p class="muted small">Available for rent</p>') +
+        '<div class="lk-meta"><span>Fee: <b>' + UI.money(l.fee) + '</b>/mo</span>' +
+          (m ? '<span>Key: <b>' + (l.keyWith === 'member' ? 'with member' : 'front desk') + '</b></span>' : '') + '</div>' +
+        '<div class="row-actions">' +
+          (m
+            ? '<button class="btn btn-sm btn-primary" data-action="lk-fee" data-id="' + l.id + '">' + UI.icon('card', 12) + ' Collect fee</button>' +
+              '<button class="icon-btn" data-action="lk-edit" data-id="' + l.id + '" title="Edit">' + UI.icon('pencil', 13) + '</button>' +
+              '<button class="icon-btn" data-action="lk-release" data-id="' + l.id + '" title="Release">' + UI.icon('x', 13) + '</button>'
+            : '<button class="btn btn-sm btn-primary" data-action="lk-edit" data-id="' + l.id + '">Assign</button>') +
+          '<button class="icon-btn danger" data-action="lk-del" data-id="' + l.id + '" title="Delete">' + UI.icon('trash', 13) + '</button>' +
+        '</div></div>';
+    }).join('') +
+  '</div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  document.getElementById('view').onclick = function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var act = t.getAttribute('data-action'), id = t.getAttribute('data-id');
+    var l = lockers.find(function(x){ return x.id === id; });
+    var actor = Auth.current();
+    if (act === 'add-locker') lockerForm(null);
+    else if (act === 'lk-edit' && l) lockerForm(l);
+    else if (act === 'lk-fee' && l){
+      Store.addTransaction({ type:'income', category:'Lockers', amount:l.fee, desc:'Locker #' + l.num + ' fee — ' + ((Store.member(l.memberId) || {}).name || '') }, false);
+      Store.log(actor ? actor.name : 'System', 'Collected locker fee — #' + l.num + ' (' + UI.money(l.fee) + ')');
+      UI.toast(UI.money(l.fee) + ' locker fee logged', 'success');
+      Views.lockers();
+    }
+    else if (act === 'lk-release' && l){
+      UI.confirmAction('Release locker', 'Release locker #' + l.num + '?', function(){
+        l.memberId = null; l.keyWith = 'frontdesk';
+        Store.updateLocker(l);
+        UI.toast('Locker #' + l.num + ' released', 'success');
+        Views.lockers();
+      }, 'Release');
+    }
+    else if (act === 'lk-del' && l){
+      UI.confirmAction('Delete locker', 'Delete locker #' + l.num + '?', function(){
+        Store.deleteLocker(l.id);
+        UI.toast('Locker deleted', 'success');
+        Views.lockers();
+      }, 'Delete');
+    }
+  };
+};
+
+function lockerForm(l){
+  var s = Store.get();
+  var memberOpts = s.members.filter(function(m){ return m.active !== false; }).map(function(m){
+    return '<option value="' + m.id + '"' + (l && l.memberId === m.id ? ' selected' : '') + '>' + UI.esc(m.name) + '</option>';
+  }).join('');
+
+  var body =
+    '<div class="form-grid-2">' +
+      '<div class="field"><label>Locker number</label><input id="lf-num" type="number" min="1" class="input" value="' + (l ? l.num : '') + '" /></div>' +
+      '<div class="field"><label>Monthly fee (' + s.settings.currency + ')</label><input id="lf-fee" type="number" min="0" class="input" value="' + (l ? l.fee : '1000') + '" /></div>' +
+      '<div class="field"><label>Assigned member</label><select id="lf-member" class="input"><option value="">— Vacant —</option>' + memberOpts + '</select></div>' +
+      '<div class="field"><label>Key status</label><select id="lf-key" class="input">' +
+        '<option value="frontdesk"' + (l && l.keyWith !== 'member' ? ' selected' : '') + '>At front desk</option>' +
+        '<option value="member"' + (l && l.keyWith === 'member' ? ' selected' : '') + '>With member</option></select></div>' +
+    '</div>' +
+    '<div class="field"><label>Notes</label><input id="lf-note" class="input" value="' + (l ? UI.esc(l.note || '') : '') + '" /></div>';
+  var footer = '<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="lf-save">' + UI.icon('check', 15) + ' Save</button>';
+  UI.showModal(l ? 'Edit / assign locker' : 'Add locker', body, footer);
+
+  document.getElementById('lf-save').addEventListener('click', function(){
+    var obj = {
+      num: +document.getElementById('lf-num').value || 0,
+      fee: +document.getElementById('lf-fee').value || 0,
+      memberId: document.getElementById('lf-member').value || null,
+      keyWith: document.getElementById('lf-key').value,
+      note: document.getElementById('lf-note').value.trim()
+    };
+    if (!obj.num){ UI.toast('Locker number required', 'error'); return; }
+    if (l){ obj.id = l.id; Store.updateLocker(obj); }
+    else Store.addLocker(obj);
+    UI.toast('Locker saved', 'success');
+    UI.closeOverlay();
+    Views.lockers();
+  });
+}
+
+/* ================= SETTINGS / BACKUP ================= */
+Views.settings = function(){
+  var s = Store.get();
+  var set = s.settings;
+
+  var html =
+  '<div class="page-head"><div><h1>Settings</h1>' +
+    '<p class="page-sub">General config, WhatsApp templates, users/passcodes and data backup.</p></div></div>' +
+
+  '<div class="grid-settings">' +
+  '<div class="card"><div class="card-head"><h3>General</h3></div>' +
+    '<div class="field"><label>Gym name</label><input id="st-gym" class="input" value="' + UI.esc(set.gymName) + '" /></div>' +
+    '<div class="field"><label>Currency symbol</label><input id="st-cur" class="input" value="' + UI.esc(set.currency) + '" /></div>' +
+    '<div class="form-grid-3">' +
+      '<div class="field"><label>Monthly fee</label><input id="st-fm" type="number" min="0" class="input" value="' + set.planFee.monthly + '" /></div>' +
+      '<div class="field"><label>Quarterly fee</label><input id="st-fq" type="number" min="0" class="input" value="' + set.planFee.quarterly + '" /></div>' +
+      '<div class="field"><label>Annual fee</label><input id="st-fa" type="number" min="0" class="input" value="' + set.planFee.annual + '" /></div>' +
+    '</div>' +
+    '<div class="form-grid-2">' +
+      '<div class="field"><label>“Expiring soon” threshold (days)</label><input id="st-rem" type="number" min="0" class="input" value="' + set.reminderDays + '" /></div>' +
+      '<div class="field"><label>Low-stock alert below</label><input id="st-low" type="number" min="0" class="input" value="' + set.lowStock + '" /></div>' +
+    '</div>' +
+    '<button class="btn btn-primary" id="st-save-gen">' + UI.icon('check', 15) + ' Save General</button></div>' +
+
+  '<div class="card"><div class="card-head"><h3>WhatsApp templates</h3></div>' +
+    '<div class="field"><label>Reminder template <span class="hint">Placeholders: {name} {gym} {date}</span></label>' +
+      '<textarea id="st-wa-rem" class="input" rows="3">' + UI.esc(set.waReminder) + '</textarea></div>' +
+    '<div class="field"><label>Quote template <span class="hint">Placeholders: {quote} {gym}</span></label>' +
+      '<textarea id="st-wa-quote" class="input" rows="2">' + UI.esc(set.waQuote) + '</textarea></div>' +
+    '<div class="field"><label>Motivation quotes <span class="hint">One per line</span></label>' +
+      '<textarea id="st-quotes" class="input" rows="5">' + UI.esc(set.quotes.join('\n')) + '</textarea></div>' +
+    '<button class="btn btn-primary" id="st-save-wa">' + UI.icon('check', 15) + ' Save Templates</button></div>' +
+
+  '<div class="card"><div class="card-head"><h3>Users & passcodes</h3></div>' +
+    '<div class="table-wrap"><table class="table"><thead><tr><th>Name</th><th>Role</th><th>Passcode</th><th></th></tr></thead><tbody>' +
+      s.users.map(function(u){
+        return '<tr><td><b>' + UI.esc(u.name) + '</b></td><td>' + Auth.roleLabel(u.role) + '</td>' +
+          '<td><code>' + UI.esc(u.passcode) + '</code></td>' +
+          '<td><div class="row-actions"><button class="icon-btn" data-action="u-edit" data-id="' + u.id + '" title="Edit">' + UI.icon('pencil', 14) + '</button>' +
+          (s.users.filter(function(x){ return x.role === 'manager'; }).length > 1 || u.role !== 'manager'
+            ? '<button class="icon-btn danger" data-action="u-del" data-id="' + u.id + '" title="Delete">' + UI.icon('trash', 14) + '</button>' : '') +
+          '</div></td></tr>';
+      }).join('') + '</tbody></table></div>' +
+    '<button class="btn mt" id="u-add">' + UI.icon('plus', 14) + ' Add User</button></div>' +
+
+  '<div class="card"><div class="card-head"><h3>Backup & restore</h3></div>' +
+    '<p class="muted small">Export the entire system (members, ledger, products, lockers…) to a JSON file, or restore from a backup.</p>' +
+    '<div class="btn-row">' +
+      '<button class="btn" id="bk-export">' + UI.icon('download', 14) + ' Export JSON backup</button>' +
+      '<button class="btn" id="bk-import">' + UI.icon('upload', 14) + ' Restore backup</button>' +
+      '<button class="btn" id="bk-csv">' + UI.icon('fileText', 14) + ' Members CSV</button>' +
+      '<button class="btn" id="bk-tx">' + UI.icon('fileText', 14) + ' Ledger CSV</button>' +
+      '<button class="btn" id="bk-att">' + UI.icon('fileText', 14) + ' Attendance CSV</button>' +
+    '</div>' +
+    '<input type="file" id="bk-file" accept="application/json,.json" class="hidden" />' +
+    '<hr class="sep" />' +
+    '<p class="muted small">Danger zone:</p>' +
+    '<div class="btn-row">' +
+      '<button class="btn" id="bk-demo">' + UI.icon('refresh', 14) + ' Reload demo data</button>' +
+      '<button class="btn btn-danger" id="bk-clear">' + UI.icon('trash', 14) + ' Clear all data</button>' +
+    '</div></div>' +
+  '</div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  document.getElementById('st-save-gen').addEventListener('click', function(){
+    set.gymName = document.getElementById('st-gym').value.trim() || 'GymFlow';
+    set.currency = document.getElementById('st-cur').value.trim() || 'Rs';
+    set.planFee = {
+      monthly: +document.getElementById('st-fm').value || 0,
+      quarterly: +document.getElementById('st-fq').value || 0,
+      annual: +document.getElementById('st-fa').value || 0
+    };
+    set.reminderDays = +document.getElementById('st-rem').value || 5;
+    set.lowStock = +document.getElementById('st-low').value || 5;
+    Store.save();
+    document.getElementById('brand-name').textContent = set.gymName;
+    document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-PK', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ' · ' + set.gymName;
+    UI.toast('General settings saved', 'success');
+  });
+
+  document.getElementById('st-save-wa').addEventListener('click', function(){
+    set.waReminder = document.getElementById('st-wa-rem').value;
+    set.waQuote = document.getElementById('st-wa-quote').value;
+    set.quotes = document.getElementById('st-quotes').value.split('\n').map(function(x){ return x.trim(); }).filter(Boolean);
+    Store.save();
+    UI.toast('WhatsApp templates saved', 'success');
+  });
+
+  document.getElementById('u-add').addEventListener('click', function(){ userForm(null); });
+  document.querySelector('#view').onclick = function(e){
+    var t = e.target.closest('[data-action]');
+    if (!t) return;
+    var act = t.getAttribute('data-action'), id = t.getAttribute('data-id');
+    if (act === 'u-edit'){
+      var u = s.users.find(function(x){ return x.id === id; });
+      if (u) userForm(u);
+    } else if (act === 'u-del'){
+      UI.confirmAction('Delete user', 'Remove this user account?', function(){
+        if (!Store.deleteUser(id)) UI.toast('Cannot delete the last manager', 'error');
+        else { UI.toast('User removed', 'success'); Views.settings(); }
+      }, 'Delete');
+    }
+  };
+
+  document.getElementById('bk-export').addEventListener('click', function(){
+    var name = (set.gymName || 'gym').toLowerCase().replace(/\s+/g, '-');
+    UI.download(name + '-backup-' + UI.todayStr() + '.json', Store.exportJSON(), 'application/json');
+    UI.toast('Backup downloaded', 'success');
+  });
+  document.getElementById('bk-csv').addEventListener('click', function(){
+    UI.download('members-' + UI.todayStr() + '.csv', Store.exportMembersCSV(), 'text/csv');
+    UI.toast('Members CSV downloaded', 'success');
+  });
+  document.getElementById('bk-tx').addEventListener('click', function(){
+    UI.download('ledger-' + UI.todayStr() + '.csv', Store.exportTransactionsCSV(), 'text/csv');
+    UI.toast('Ledger CSV downloaded', 'success');
+  });
+  document.getElementById('bk-att').addEventListener('click', function(){
+    UI.download('attendance-' + UI.todayStr() + '.csv', Store.exportAttendanceCSV(), 'text/csv');
+    UI.toast('Attendance CSV downloaded', 'success');
+  });
+  var fileEl = document.getElementById('bk-file');
+  document.getElementById('bk-import').addEventListener('click', function(){ fileEl.click(); });
+  fileEl.addEventListener('change', function(){
+    var f = fileEl.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try {
+        var obj = JSON.parse(reader.result);
+        if (!obj.users || !obj.members || !obj.settings) throw new Error('bad format');
+        Store.importData(obj);
+        UI.toast('Backup restored — reloading…', 'success');
+        setTimeout(function(){ location.reload(); }, 800);
+      } catch(err){
+        UI.toast('Invalid backup file: ' + err.message, 'error');
+      }
+    };
+    reader.readAsText(f);
+    fileEl.value = '';
+  });
+
+  document.getElementById('bk-demo').addEventListener('click', function(){
+    UI.confirmAction('Reload demo data', 'This overwrites all current data with the demo dataset. Continue?', function(){
+      Store.resetDemo();
+      UI.toast('Demo data loaded — reloading…', 'success');
+      setTimeout(function(){ location.reload(); }, 800);
+    });
+  });
+  document.getElementById('bk-clear').addEventListener('click', function(){
+    UI.confirmAction('Clear all data', 'This permanently deletes ALL data. Export a backup first! Continue?', function(){
+      Store.clearAll();
+      UI.toast('All data cleared — reloading…', 'success');
+      setTimeout(function(){ location.reload(); }, 800);
+    });
+  });
+};
+
+function userForm(u){
+  var body =
+    '<div class="field"><label>Full name</label><input id="uf-name" class="input" value="' + (u ? UI.esc(u.name) : '') + '" /></div>' +
+    '<div class="form-grid-2">' +
+      '<div class="field"><label>Role</label><select id="uf-role" class="input">' +
+        ['manager','frontdesk','trainer'].map(function(r){
+          return '<option value="' + r + '"' + (u && u.role === r ? ' selected' : '') + '>' + Auth.roleLabel(r) + '</option>';
+        }).join('') + '</select></div>' +
+      '<div class="field"><label>Passcode</label><input id="uf-pass" class="input" value="' + (u ? UI.esc(u.passcode) : '') + '" /></div>' +
+    '</div>';
+  var footer = '<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="uf-save">' + UI.icon('check', 15) + ' Save User</button>';
+  UI.showModal(u ? 'Edit user / passcode' : 'Add user', body, footer);
+
+  document.getElementById('uf-save').addEventListener('click', function(){
+    var name = document.getElementById('uf-name').value.trim();
+    var role = document.getElementById('uf-role').value;
+    var pass = document.getElementById('uf-pass').value.trim();
+    if (!name){ UI.toast('Name required', 'error'); return; }
+    if (!pass){ UI.toast('Passcode required', 'error'); return; }
+    if (u){
+      u.name = name; u.role = role; u.passcode = pass;
+      Store.updateUser(u);
+    } else {
+      Store.addUser({ name:name, role:role, passcode:pass });
+    }
+    UI.toast('User saved', 'success');
+    UI.closeOverlay();
+    Views.settings();
+  });
+}
+
+;
+/* === js/app.js === */
+/* ============================================================
+   GymFlow — Bootstrap: login gate, router, sidebar, command
+   palette, theming, keyboard shortcuts
+   ============================================================ */
+window.App = (function(){
+  'use strict';
+
+  var charts = {};
+  var currentView = null;
+
+  function destroyChart(key){ if (charts[key]){ try { charts[key].destroy(); } catch(e){} charts[key] = null; } }
+  function chart(canvasId, cfg){
+    var el = document.getElementById(canvasId);
+    if (!el) return;
+    destroyChart(canvasId);
+    charts[canvasId] = new Chart(el, cfg);
+  }
+
+  /* ---------------- theme ---------------- */
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem('gymflow_theme', t); } catch(e){}
+    var btn = document.getElementById('btn-theme');
+    if (btn) btn.innerHTML = UI.icon(t === 'dark' ? 'sun' : 'moon', 15);
+  }
+  function themeInit(){
+    var saved = null;
+    try { saved = localStorage.getItem('gymflow_theme'); } catch(e){}
+    applyTheme(saved || 'light');
+    var btn = document.getElementById('btn-theme');
+    if (btn) btn.addEventListener('click', function(){
+      applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  /* ---------------- login ---------------- */
+  function renderLogin(){
+    var s = Store.get();
+    document.getElementById('login-gym-name').textContent = s.settings.gymName;
+
+    var roles = [
+      { r:'manager',   icon:'user',  label:'Manager' },
+      { r:'frontdesk', icon:'users', label:'Front Desk' },
+      { r:'trainer',   icon:'dumbbell', label:'Trainer' }
+    ];
+    document.getElementById('role-picker').innerHTML = roles.map(function(x){
+      return '<button class="role-card" data-role="' + x.r + '"><span class="role-ic">' + UI.icon(x.icon, 22) + '</span><b>' + x.label + '</b></button>';
+    }).join('');
+
+    var currentRole = null;
+    var pass = { code:'' };
+    var passArea = document.getElementById('passcode-area');
+    var dots = document.getElementById('pass-dots');
+    var err = document.getElementById('login-error');
+    var unlock = document.getElementById('btn-unlock');
+
+    function renderDots(){
+      var n = pass.code.length;
+      dots.innerHTML = Array(Math.max(n, 4)).fill(0).map(function(_, i){
+        return '<span class="dot' + (i < n ? ' on' : '') + '"></span>';
+      }).join('');
+      unlock.disabled = pass.code.length < 3;
+    }
+    document.getElementById('keypad').innerHTML =
+      ['1','2','3','4','5','6','7','8','9','','0','⌫'].map(function(k){
+        return k ? '<button class="key" data-key="' + k + '">' + k + '</button>' : '<span></span>';
+      }).join('');
+    renderDots();
+
+    document.getElementById('keypad').addEventListener('click', function(e){
+      var b = e.target.closest('[data-key]');
+      if (!b) return;
+      var k = b.getAttribute('data-key');
+      err.textContent = '';
+      if (k === '⌫') pass.code = pass.code.slice(0, -1);
+      else if (pass.code.length < 6) pass.code += k;
+      renderDots();
+    });
+
+    function attempt(){
+      if (!pass.code) return;
+      var u = Auth.login(currentRole, pass.code);
+      if (u){
+        pass.code = '';
+        boot(u);
+      } else {
+        err.textContent = 'Wrong passcode for ' + Auth.roleLabel(currentRole) + '. Try again.';
+        pass.code = '';
+        renderDots();
+      }
+    }
+    unlock.addEventListener('click', attempt);
+
+    function loginKey(ev){
+      if (!loginVisible()) return;
+      if (/^[0-9]$/.test(ev.key)){ pass.code += ev.key; renderDots(); }
+      else if (ev.key === 'Backspace'){ pass.code = pass.code.slice(0,-1); renderDots(); }
+      else if (ev.key === 'Enter'){ attempt(); }
+    }
+    document.addEventListener('keydown', loginKey);
+    document._loginKey = loginKey;
+
+    Array.prototype.forEach.call(document.querySelectorAll('#role-picker .role-card'), function(card){
+      card.addEventListener('click', function(){
+        currentRole = card.getAttribute('data-role');
+        Array.prototype.forEach.call(document.querySelectorAll('#role-picker .role-card'), function(c){ c.classList.remove('active'); });
+        card.classList.add('active');
+        document.getElementById('pass-role-label').textContent = 'Enter ' + Auth.roleLabel(currentRole) + ' passcode';
+        passArea.classList.remove('hidden');
+        err.textContent = '';
+        var first = passArea.querySelector('.keypad .key');
+        if (first) first.focus({ preventScroll:true });
+      });
+    });
+    document.getElementById('btn-back-roles').addEventListener('click', function(){
+      passArea.classList.add('hidden');
+      Array.prototype.forEach.call(document.querySelectorAll('#role-picker .role-card'), function(c){ c.classList.remove('active'); });
+    });
+  }
+  function loginVisible(){ return !document.getElementById('app').classList.contains('hidden'); }
+
+  /* ---------------- boot ---------------- */
+  function boot(u){
+    var s = Store.get();
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+
+    document.getElementById('brand-name').textContent = s.settings.gymName;
+    document.getElementById('user-name').textContent = u.name;
+    document.getElementById('user-role').textContent = Auth.roleLabel(u.role);
+    document.getElementById('user-avatar').textContent = (u.name.trim().split(' ')[0] || '?')[0].toUpperCase();
+    document.getElementById('topbar-date').textContent =
+      new Date().toLocaleDateString('en-PK', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ' · ' + s.settings.gymName;
+
+    var kb = Math.round(Store.storageSize() / 102.4) / 10;
+    document.getElementById('storage-size').textContent = (kb >= 10 ? Math.round(kb) : kb.toFixed(1)) + ' KB';
+
+    document.getElementById('btn-logout-top').innerHTML = UI.icon('logout', 15);
+    function logoutFlow(){
+      UI.confirmAction('Log out', 'End your session?', function(){
+        Auth.logout();
+        location.reload();
+      }, 'Log out');
+    }
+    document.getElementById('btn-logout').addEventListener('click', logoutFlow);
+    document.getElementById('btn-logout-top').addEventListener('click', logoutFlow);
+
+    renderSidebar();
+    nav('dashboard');
+    setupPalette();
+    themeInit();
+  }
+
+  function renderSidebar(){
+    var navEl = document.getElementById('nav');
+    var items = Auth.menu();
+    var html = '';
+    items.forEach(function(m){
+      if (m.id === 'checkin') html += '<div class="nav-label-sec">Operations</div>';
+      if (m.id === 'pos') html += '<div class="nav-label-sec">Business</div>';
+      if (m.id === 'settings') html += '<div class="nav-label-sec">System</div>';
+      html += '<a class="nav-item" data-view="' + m.id + '">' + UI.icon(m.icon, 17) +
+        '<span class="nav-label">' + UI.esc(m.label) + '</span></a>';
+    });
+    navEl.innerHTML = html;
+    navEl.onclick = function(e){
+      var it = e.target.closest('.nav-item');
+      if (it) nav(it.getAttribute('data-view'));
+    };
+  }
+
+  function nav(view, params){
+    if (!Auth.canAccess(view)){
+      view = 'dashboard';
+      if (!Auth.canAccess(view)){
+        document.getElementById('view').innerHTML = '<div class="empty-state">Access denied for your role.</div>';
+        return;
+      }
+    }
+    currentView = view;
+    var it = Auth.MENU.find(function(m){ return m.id === view; });
+    var label = it ? it.label : view;
+    if (Auth.current().role === 'trainer' && it && it.trainerLabel) label = it.trainerLabel;
+    document.getElementById('view-title').textContent = label;
+    Array.prototype.forEach.call(document.querySelectorAll('.nav-item'), function(n){
+      n.classList.toggle('active', n.getAttribute('data-view') === view);
+    });
+    if (Views[view]) Views[view](params || {});
+    else document.getElementById('view').innerHTML = '<div class="empty-state">View not found.</div>';
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------------- command palette ---------------- */
+  function setupPalette(){
+    var root = document.getElementById('palette-root');
+    var open = false;
+    var selected = -1;
+
+    function paletteItems(q){
+      q = (q || '').toLowerCase();
+      var s = Store.get();
+      var u = Auth.current();
+      var items = [];
+
+      Auth.menu().forEach(function(m){
+        if (m.label.toLowerCase().indexOf(q) > -1 || (!q && items.length < 6)){
+          items.push({ kind:'view', view:m.id, icon:m.icon, title:m.label, sub:'Open view' });
+        }
+      });
+
+      s.members.forEach(function(m){
+        if (!q || m.name.toLowerCase().indexOf(q) > -1 || (m.phone||'').replace(/\s/g,'').indexOf(q.replace(/\s/g,'')) > -1){
+          items.push({ kind:'member', id:m.id, icon:'user', title:m.name, sub:m.plan + ' · ' + (m.phone||'no phone') });
+        }
+      });
+      if (!q) items = items.slice(0, 20);
+
+      if (q){
+        if (Auth.canAccess('members') && /add|new member/.test(q)) items.push({ kind:'nav', view:'members', act:'add', icon:'plus', title:'Add member', sub:'Members' });
+        if (Auth.canAccess('pos') && /sale|pos|store/.test(q)) items.push({ kind:'nav', view:'pos', act:'checkout', icon:'cart', title:'New POS sale', sub:'Store & POS' });
+        if (Auth.canAccess('finance') && /expense|transaction/.test(q)) items.push({ kind:'nav', view:'finance', act:'add-tx', icon:'banknote', title:'Add transaction', sub:'Finances' });
+      }
+      return items;
+    }
+
+    function renderPalette(q){
+      var items = paletteItems(q);
+      selected = items.length ? 0 : -1;
+      var html = '';
+      var lastSec = '';
+      items.forEach(function(it, i){
+        var sec = it.kind === 'view' ? 'Views' : (it.kind === 'member' ? 'Members' : 'Actions');
+        if (sec !== lastSec){ html += '<div class="pal-sec">' + sec + '</div>'; lastSec = sec; }
+        html += '<div class="pal-item' + (i === 0 ? ' sel' : '') + '" data-i="' + i + '">' +
+          '<span class="p-ic">' + UI.icon(it.icon, 16) + '</span>' +
+          '<span class="p-main"><b>' + UI.esc(it.title) + '</b><span class="p-sub">' + UI.esc(it.sub || '') + '</span></span>' +
+          (it.kind === 'member' ? UI.badge(Store.statusOf(Store.member(it.id))) : '') +
+          '</div>';
+      });
+      document.getElementById('pal-results').innerHTML = html || '<div class="pal-empty">No matches found</div>';
+      Array.prototype.forEach.call(document.querySelectorAll('#palette-root .pal-item'), function(el){
+        el.addEventListener('mouseenter', function(){
+          selected = +el.getAttribute('data-i');
+          highlight();
+        });
+        el.addEventListener('click', function(){ runItem(items[+el.getAttribute('data-i')]); });
+      });
+    }
+    function highlight(){
+      Array.prototype.forEach.call(document.querySelectorAll('#palette-root .pal-item'), function(el, i){
+        el.classList.toggle('sel', i === selected);
+      });
+      var el = document.querySelector('#palette-root .pal-item.sel');
+      if (el) el.scrollIntoView({ block:'nearest' });
+    }
+    function runItem(it){
+      close();
+      if (!it) return;
+      if (it.kind === 'view') nav(it.view);
+      else if (it.kind === 'nav') nav(it.view, { open: it.act });
+      else if (it.kind === 'member'){
+        var m = Store.member(it.id);
+        if (m && Views.openMember) Views.openMember(m);
+      }
+    }
+    function openPalette(){
+      open = true;
+      root.innerHTML = '<div class="palette-overlay"><div class="palette">' +
+        '<div class="palette-input-row">' + UI.icon('search', 17) +
+        '<input class="palette-input" id="pal-input" placeholder="Search members, views, actions…" />' +
+        '<kbd style="font-size:10.5px;color:var(--text-4)">ESC</kbd></div>' +
+        '<div class="palette-results" id="pal-results"></div></div></div>';
+      var input = document.getElementById('pal-input');
+      renderPalette('');
+      input.focus();
+      input.addEventListener('input', function(){ renderPalette(input.value); });
+      input.addEventListener('keydown', function(e){
+        var items = paletteItems(input.value);
+        if (e.key === 'ArrowDown'){ e.preventDefault(); selected = Math.min(selected + 1, items.length - 1); highlight(); }
+        else if (e.key === 'ArrowUp'){ e.preventDefault(); selected = Math.max(selected - 1, 0); highlight(); }
+        else if (e.key === 'Enter'){ e.preventDefault(); runItem(items[selected]); }
+        else if (e.key === 'Escape'){ close(); }
+      });
+      root.querySelector('.palette-overlay').addEventListener('mousedown', function(e){
+        if (e.target.classList.contains('palette-overlay')) close();
+      });
+    }
+    function close(){ root.innerHTML = ''; open = false; }
+
+    document.addEventListener('keydown', function(e){
+      if (!loginVisible()) return; // still on the login screen
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')){
+        e.preventDefault();
+        if (!Auth.current()) return;
+        if (open) close(); else openPalette();
+      } else if (e.key === 'Escape'){
+        if (open){ close(); return; }
+        var mroot = document.getElementById('modal-root');
+        if (mroot && mroot.children.length){
+          UI.closeOverlay();
+        }
+      }
+    });
+    document.getElementById('top-search').addEventListener('click', function(){
+      if (Auth.current()) openPalette();
+    });
+  }
+
+  /* ---------------- init ---------------- */
+  document.addEventListener('DOMContentLoaded', function(){
+    Store.get();
+    if (Auth.current()){
+      boot(Auth.current());
+    } else {
+      renderLogin();
+    }
+    themeInit();
+  });
+
+  function refresh(){ try { if (currentView) nav(currentView); } catch(e){} }
+
+  return { nav: nav, chart: chart, boot: boot, refresh: refresh };
+})();
+
+  </script>
+<!-- ============================================================
+     Cloud sync — Firebase (real-time, free Spark plan)
+     Collections: users, members, products, transactions, sales,
+     attendance, plans, shifts, lockers  +  meta/main doc
+     ============================================================ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+window.Cloud = (function(){
+  'use strict';
+  var CONFIG = {
+    apiKey: "AIzaSyB9hXkPx1VikvtWfKbvwvAMf4Yt4vAVWRM",
+    authDomain: "gymcity-36b31.firebaseapp.com",
+    projectId: "gymcity-36b31",
+    storageBucket: "gymcity-36b31.firebasestorage.app",
+    messagingSenderId: "233963370076",
+    appId: "1:233963370076:web:144558b807a019c1db9899"
+  };
+  var COLS = ['users','members','products','transactions','sales','attendance','plans','shifts','lockers'];
+  var db = null, booted = false, pushTimer = null;
+  var synced = {}, syncedMeta = null, received = {};
+  var firstPayloads = {}, firstMeta = null;
+
+  function setStatus(kind, text){
+    var el = document.getElementById('cloud-pill');
+    if (!el){
+      el = document.createElement('div');
+      el.id = 'cloud-pill';
+      el.style.cssText = 'position:fixed;left:14px;bottom:14px;z-index:99999;display:flex;align-items:center;gap:7px;background:rgba(11,18,32,.92);color:#e6edf3;border:1px solid rgba(255,255,255,.14);padding:7px 12px;border-radius:999px;font:600 12px Inter,system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.25);pointer-events:none';
+      document.body.appendChild(el);
+    }
+    var dot = { live:'#10b981', sync:'#f59e0b', off:'#64748b', err:'#ef4444' }[kind] || '#64748b';
+    el.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:' + dot + '"></span>' + text;
+  }
+
+  /* ---------- outbound: local changes -> Firestore ---------- */
+  function pushLocal(){
+    if (!db || !booted || !window.Store) return;
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(doPush, 120);
+  }
+  function doPush(){
+    pushTimer = null;
+    var s; try { s = Store.get(); } catch(e){ return; }
+    try {
+      var batch = db.batch(), ops = 0;
+      COLS.forEach(function(c){
+        var local = s[c] || [], map = synced[c] || {};
+        local.forEach(function(e){
+          if (!e || !e.id) return;
+          var cur = JSON.stringify(e);
+          if (map[e.id] !== cur){ batch.set(db.collection(c).doc(e.id), e); ops++; }
+        });
+        Object.keys(map).forEach(function(id){
+          if (!local.some(function(x){ return x.id === id; })){ batch.delete(db.collection(c).doc(id)); ops++; }
+        });
+      });
+      var metaObj = { settings: s.settings, activity: (s.activity || []).slice(-300), meta: s.meta };
+      var metaCur = JSON.stringify(metaObj);
+      if (syncedMeta !== metaCur){ batch.set(db.collection('meta').doc('main'), metaObj); ops++; }
+      if (ops === 0) return;
+      batch.commit().then(function(){
+        COLS.forEach(function(c){
+          synced[c] = {};
+          (s[c] || []).forEach(function(e){ if (e && e.id) synced[c][e.id] = JSON.stringify(e); });
+        });
+        syncedMeta = metaCur;
+      }).catch(function(err){ console.error('Cloud push failed', err); });
+    } catch(e){ console.error('Cloud batch error', e); }
+  }
+
+  /* ---------- inbound: Firestore -> local + live re-render ---------- */
+  function refreshUI(){
+    try {
+      if (!window.App || !window.Auth || !Auth.current()) return;
+      var mroot = document.getElementById('modal-root');
+      if (mroot && mroot.children.length) return;            // don't disturb open forms
+      var ae = document.activeElement;
+      if (ae && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName)) return; // don't nuke typing
+      App.refresh();
+    } catch(e){}
+  }
+  function applyCollection(c, docs){
+    var s; try { s = Store.get(); } catch(e){ return; }
+    var serverMap = {}, i;
+    for (i = 0; i < docs.length; i++) serverMap[docs[i].id] = docs[i].data;
+    var out = [];
+    (s[c] || []).forEach(function(e){
+      if (e && serverMap[e.id] !== undefined){ out.push(serverMap[e.id]); delete serverMap[e.id]; }
+    });
+    for (var id in serverMap) out.push(serverMap[id]);
+    s[c] = out;
+    synced[c] = {};
+    out.forEach(function(e){ if (e && e.id) synced[c][e.id] = JSON.stringify(e); });
+    Store.save();
+  }
+  function applyMeta(d){
+    if (!d) return;
+    var s; try { s = Store.get(); } catch(e){ return; }
+    if (d.settings) s.settings = d.settings;
+    if (d.activity) s.activity = d.activity;
+    if (d.meta) s.meta = d.meta;
+    syncedMeta = JSON.stringify(d);
+    Store.save();
+  }
+  function anyRemote(){
+    for (var c in firstPayloads){ if (firstPayloads[c] && firstPayloads[c].length) return true; }
+    return !!firstMeta;
+  }
+  function seedRemote(){
+    var s; try { s = Store.get(); } catch(e){ return; }
+    try {
+      var batch = db.batch();
+      COLS.forEach(function(c){
+        (s[c] || []).forEach(function(e){ if (e && e.id) batch.set(db.collection(c).doc(e.id), e); });
+      });
+      batch.set(db.collection('meta').doc('main'), { settings: s.settings, activity: (s.activity || []).slice(-300), meta: s.meta });
+      batch.commit().then(function(){
+        COLS.forEach(function(c){
+          synced[c] = {};
+          (s[c] || []).forEach(function(e){ if (e && e.id) synced[c][e.id] = JSON.stringify(e); });
+        });
+        syncedMeta = JSON.stringify({ settings: s.settings, activity: (s.activity || []).slice(-300), meta: s.meta });
+        setStatus('live', 'Live — synced');
+      }).catch(function(err){ console.error('Cloud seed failed', err); setStatus('err', 'Cloud sync error'); });
+    } catch(e){ console.error(e); setStatus('err', 'Cloud sync error'); }
+  }
+  function onFirst(){
+    var total = COLS.length + 1;
+    var done = 0;
+    COLS.forEach(function(c){ if (received[c]) done++; });
+    if (received.__meta) done++;
+    if (done < total) return;
+    booted = true;
+    if (!anyRemote()){
+      seedRemote();
+    } else {
+      COLS.forEach(function(c){ applyCollection(c, firstPayloads[c] || []); });
+      if (firstMeta) applyMeta(firstMeta);
+      refreshUI();
+      setStatus('live', 'Live — synced');
+    }
+  }
+  function startSubs(){
+    COLS.forEach(function(c){
+      db.collection(c).onSnapshot(function(snap){
+        var docs = [];
+        snap.forEach(function(doc){ docs.push({ id: doc.id, data: doc.data() }); });
+        if (!booted){
+          if (!received[c]){ received[c] = true; firstPayloads[c] = docs; onFirst(); }
+        } else {
+          applyCollection(c, docs);
+          refreshUI();
+        }
+      }, function(err){
+        console.error('Cloud subscribe error', c, err);
+        if (!received[c]){ received[c] = true; firstPayloads[c] = []; onFirst(); }
+        setStatus('err', 'Cloud sync error');
+      });
+    });
+    db.collection('meta').doc('main').onSnapshot(function(snap){
+      var d = snap.exists ? snap.data() : null;
+      if (!booted){
+        if (!received.__meta){ received.__meta = true; firstMeta = d; onFirst(); }
+      } else if (d) {
+        applyMeta(d);
+        refreshUI();
+      }
+    }, function(err){
+      console.error('Cloud subscribe error', 'meta', err);
+      if (!received.__meta){ received.__meta = true; firstMeta = null; onFirst(); }
+      setStatus('err', 'Cloud sync error');
+    });
+  }
+  function init(){
+    if (!window.firebase){ setStatus('err', 'Cloud SDK blocked'); return; }
+    try { firebase.initializeApp(CONFIG); } catch(e){ return; }
+    db = firebase.firestore();
+    try { db.enablePersistence(); } catch(e){}
+    setStatus('sync', 'Connecting…');
+    try {
+      firebase.auth().signInAnonymously().then(function(){
+        startSubs();
+      }).catch(function(err){
+        console.error('Cloud auth failed — enable Anonymous sign-in in Firebase console', err);
+        setStatus('err', 'Cloud off — enable Anonymous auth + rules');
+      });
+    } catch(e){ console.error(e); setStatus('err', 'Cloud off'); }
+  }
+
+  return { pushLocal: pushLocal, init: init };
+})();
+document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ Cloud.init(); }, 300); });
+</script>
+
+</body>
+</html>
